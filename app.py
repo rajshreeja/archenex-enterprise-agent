@@ -3,9 +3,6 @@ import pandas as pd
 import numpy as np
 import io
 from datetime import datetime, timedelta
-from docx import Document
-from docx.shared import Inches, Pt, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # 1. Page Configuration
 st.set_page_config(
@@ -244,63 +241,66 @@ elif module_selection == "5. Boardroom Dossier & Export":
     })
     st.dataframe(ledger_df, use_container_width=True)
 
-    # Function to generate .docx document in memory
-    def generate_docx():
-        doc = Document()
-        
-        # Title Styling
-        p_title = doc.add_paragraph()
-        run_title = p_title.add_run("ARCHENEX ENTERPRISE AUDIT DOSSIER")
-        run_title.font.size = Pt(20)
-        run_title.font.bold = True
-        run_title.font.color.rgb = RGBColor(30, 58, 138)
-        
-        # Subtitle
-        doc.add_paragraph(f"Client Profile: {client_name} | Sector: {industry_sector}\nActive Connectors: {hris_system} & {erp_system}\nGenerated on: {datetime.now().strftime('%Y-%m-%d')}")
-        
-        # Executive Summary
-        doc.add_heading("1. Executive Summary & Leakage Valuation", level=1)
-        doc.add_paragraph(f"Total Verified Annual Leakage Identified: INR {total_leakage_cr} Cr")
-        doc.add_paragraph(f"• Blue-Collar Floor Drain ({hris_system}): INR {blue_drain_lakhs} Lakhs")
-        doc.add_paragraph(f"• White-Collar ERP Gap ({erp_system}): INR {white_drain_lakhs} Lakhs")
-        doc.add_paragraph(f"• Systemic Friction Index: {friction_index}%")
-        
-        # Financial Ledger Table
-        doc.add_heading("2. Financial Reconciliation Ledger", level=1)
-        table = doc.add_table(rows=1, cols=4)
-        hdr_cells = table.rows[0].cells
-        hdr_cells[0].text = 'Audit Vector'
-        hdr_cells[1].text = 'Source Silos'
-        hdr_cells[2].text = 'Leakage (₹ Lakhs)'
-        hdr_cells[3].text = 'Remediation Status'
-        
-        for _, row in ledger_df.iterrows():
-            row_cells = table.add_row().cells
-            row_cells[0].text = str(row['Audit Vector'])
-            row_cells[1].text = str(row['Source Silos'])
-            row_cells[2].text = str(row['Financial Leakage (₹ Lakhs)'])
-            row_cells[3].text = str(row['Remediation Status'])
+    # Automated Word (.docx compatible HTML MIME format) Report Generator
+    def generate_word_report():
+        html_content = f"""
+        <html>
+        <head><meta charset='utf-8'></head>
+        <body style='font-family: Arial, sans-serif; color: #0f172a; line-height: 1.6;'>
+            <h1 style='color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px;'>ARCHENEX ENTERPRISE AUDIT DOSSIER</h1>
+            <p><strong>Client Profile:</strong> {client_name}<br>
+            <strong>Industry Sector:</strong> {industry_sector}<br>
+            <strong>Integrated Architecture:</strong> Plant MES + {hris_system} + {erp_system}<br>
+            <strong>Audit Date:</strong> {datetime.now().strftime('%Y-%m-%d')}</p>
             
-        # Roadmap
-        doc.add_heading("3. Boardroom Remediation Roadmap & ROI", level=1)
-        doc.add_paragraph(f"• ArcheNex Enterprise License Tier: INR 35 Lakhs / Year")
-        doc.add_paragraph(f"• Net Financial Payback: 10x ROI model, fully realized within 30 days of deployment.")
-        doc.add_paragraph("• Phase 1 (Days 1–30): Non-invasive secure connector deployment.\n• Phase 2 (Days 31–60): Real-time cross-silo anomaly detection activation.\n• Phase 3 (Days 61+): Autonomous governance loop active.")
-        
-        buffer = io.BytesIO()
-        doc.save(buffer)
-        buffer.seek(0)
-        return buffer
+            <h2 style='color: #2563eb;'>1. Executive Summary & Leakage Valuation</h2>
+            <p>Total Verified Annual Leakage Identified: <strong>₹{total_leakage_cr} Cr</strong></p>
+            <ul>
+                <li>Blue-Collar Floor Drain ({hris_system}): ₹{blue_drain_lakhs} Lakhs</li>
+                <li>White-Collar ERP Gap ({erp_system}): ₹{white_drain_lakhs} Lakhs</li>
+                <li>Systemic Friction Index: {friction_index}%</li>
+            </ul>
+            
+            <h2 style='color: #2563eb;'>2. Financial Reconciliation Ledger</h2>
+            <table border='1' cellspacing='0' cellpadding='6' style='border-collapse: collapse; border-color: #cbd5e1; width: 100%;'>
+                <tr style='background-color: #f8fafc;'>
+                    <th>Audit Vector</th><th>Source Silos</th><th>Leakage (₹ Lakhs)</th><th>Remediation Status</th>
+                </tr>
+        """
+        for _, row in ledger_df.iterrows():
+            html_content += f"""
+                <tr>
+                    <td>{row['Audit Vector']}</td>
+                    <td>{row['Source Silos']}</td>
+                    <td>{row['Financial Leakage (₹ Lakhs)']}</td>
+                    <td>{row['Remediation Status']}</td>
+                </tr>
+            """
+        html_content += f"""
+            </table>
+            
+            <h2 style='color: #2563eb;'>3. Boardroom Remediation Roadmap & Commercial Payback</h2>
+            <p><strong>ArcheNex Enterprise Tier:</strong> ₹35 Lakhs / Year (10x ROI Payback Model)</p>
+            <p><strong>Implementation Phases:</strong></p>
+            <ul>
+                <li><strong>Phase 1 (Days 1–30):</strong> Secure non-invasive API connector deployment across {client_name}'s plant MES, {hris_system}, and {erp_system} environments.</li>
+                <li><strong>Phase 2 (Days 31–60):</strong> Real-time cross-silo anomaly detection activation to halt unverified wage payouts and unbilled milestone lags.</li>
+                <li><strong>Phase 3 (Days 61+):</strong> Autonomous governance loop established, securing recurring annual recovery of ₹{total_leakage_cr} Cr.</li>
+            </ul>
+        </body>
+        </html>
+        """
+        return html_content
 
     # Export Buttons
     col_dl1, col_dl2 = st.columns(2)
     with col_dl1:
-        docx_buffer = generate_docx()
+        word_html = generate_word_report()
         st.download_button(
-            label="📥 Download Boardroom Dossier (.docx)",
-            data=docx_buffer,
-            file_name=f"ArcheNex_Audit_Dossier_{client_name.replace(' ', '_')}.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            label="📥 Automatically Generate & Download Word Report (.doc)",
+            data=word_html,
+            file_name=f"ArcheNex_Audit_Dossier_{client_name.replace(' ', '_')}.doc",
+            mime="application/msword",
         )
     with col_dl2:
         csv_data = ledger_df.to_csv(index=False).encode('utf-8')
@@ -308,7 +308,7 @@ elif module_selection == "5. Boardroom Dossier & Export":
             label="📥 Download Ledger Data (CSV)",
             data=csv_data,
             file_name=f"ArcheNex_Ledger_{client_name.replace(' ', '_')}.csv",
-            mime="text/csv",
+            mime="text/css" if False else "text/csv",
         )
 
     st.markdown("### 🚀 Commercial Payback Model")
