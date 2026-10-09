@@ -1,9 +1,12 @@
 """ArcheNex Enterprise Intelligence: Streamlit app (v3)."""
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Ensure the root directory is in Python's module search path
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import archenex.agent as ag
+# ... rest of your imports ...
 import hashlib
 import html
 import io
