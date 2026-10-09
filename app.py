@@ -20,10 +20,10 @@ import mapping as mp
 import pipeline
 import detectors as dt
 import store
-from archenex.connectors import build_connectors, read_table
-from archenex.demo_data import make_demo, templates
-from archenex.dispatch import send
-from archenex.report import build_pdf
+from connectors import build_connectors, read_table
+from demo_data import make_demo, templates
+from dispatch import send
+from report import build_pdf
 
 st.set_page_config(page_title="ArcheNex Enterprise Intelligence", page_icon="⚡", layout="wide")
 st.markdown("""
