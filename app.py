@@ -233,29 +233,29 @@ elif module_selection == "4. ERP & Billing Reconciliation":
 elif module_selection == "5. Boardroom Dossier & Export":
     st.subheader("Comprehensive Boardroom Audit Dossier & High-End PDF Generator")
     
-    # PDF Generation Engine using ReportLab & Matplotlib
+    # PDF Generation Engine using ReportLab & Matplotlib with Glossary & Risk Framework
     def generate_pdf_report():
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
         story = []
         styles = getSampleStyleSheet()
         
-        title_style = ParagraphStyle('DocTitle', parent=styles['Heading1'], fontSize=16, textColor=colors.HexColor('#1e3a8a'), spaceAfter=4)
-        subtitle_style = ParagraphStyle('DocSubtitle', parent=styles['Normal'], fontSize=9, textColor=colors.HexColor('#64748b'), spaceAfter=12)
-        heading_style = ParagraphStyle('SectionHeading', parent=styles['Heading2'], fontSize=11, textColor=colors.HexColor('#2563eb'), spaceBefore=8, spaceAfter=4)
-        body_style = ParagraphStyle('BodyTextCustom', parent=styles['Normal'], fontSize=8.5, textColor=colors.HexColor('#0f172a'), leading=12, spaceAfter=6)
+        title_style = ParagraphStyle('DocTitle', parent=styles['Heading1'], fontSize=15, textColor=colors.HexColor('#1e3a8a'), spaceAfter=2)
+        subtitle_style = ParagraphStyle('DocSubtitle', parent=styles['Normal'], fontSize=8.5, textColor=colors.HexColor('#64748b'), spaceAfter=10)
+        heading_style = ParagraphStyle('SectionHeading', parent=styles['Heading2'], fontSize=10.5, textColor=colors.HexColor('#2563eb'), spaceBefore=8, spaceAfter=4)
+        body_style = ParagraphStyle('BodyTextCustom', parent=styles['Normal'], fontSize=8, textColor=colors.HexColor('#0f172a'), leading=11, spaceAfter=4)
         
         # Header
-        story.append(Paragraph("ARCHENEX ENTERPRISE AUDIT DOSSIER", title_style))
-        story.append(Paragraph(f"<b>Client Profile:</b> {client_name} | <b>Sector:</b> {industry_sector}<br/><b>Connectors:</b> {hris_system} & {erp_system} | <b>Generated on:</b> {datetime.now().strftime('%Y-%m-%d')}", subtitle_style))
+        story.append(Paragraph("ARCHENEX ENTERPRISE AUDIT DOSSIER & GOVERNANCE REPORT", title_style))
+        story.append(Paragraph(f"<b>Client Profile:</b> {client_name} | <b>Sector:</b> {industry_sector}<br/><b>Active Connectors:</b> {hris_system} & {erp_system} | <b>Report Date:</b> {datetime.now().strftime('%Y-%m-%d')}", subtitle_style))
         
-        # Plain English Executive Summary
-        story.append(Paragraph("Executive Summary & Plain English Overview", heading_style))
+        # 1. Executive Summary & Layman Translation Layer
+        story.append(Paragraph("1. Executive Summary & Plain English Translation", heading_style))
         exec_summary = (
-            f"Your factory floor acts like an engine while your corporate office acts as the steering wheel. Currently, they operate in silos. "
-            f"When machine parts are delayed on the floor, workers wait idly—yet your <b>{hris_system}</b> attendance system continues paying full wages. "
-            f"Simultaneously, completed projects wait weeks before <b>{erp_system}</b> generates invoices. ArcheNex bridges these gaps to safely recover "
-            f"<b>₹{total_leakage_cr} Cr</b> annually without headcount reductions."
+            f"<b>The Big Picture:</b> Your factory floor operates like an independent engine while your corporate office acts as the steering wheel. "
+            f"Currently, they operate in silos. When machine parts are delayed on the floor, workers wait idly—yet your <b>{hris_system}</b> attendance system "
+            f"continues paying full wages. Simultaneously, completed projects sit in administrative limbo for weeks before <b>{erp_system}</b> generates invoices. "
+            f"ArcheNex bridges these systems to safely recover <b>₹{total_leakage_cr} Cr</b> annually without any headcount reductions."
         )
         story.append(Paragraph(exec_summary, body_style))
         
@@ -269,22 +269,22 @@ elif module_selection == "5. Boardroom Dossier & Export":
             ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#f8fafc')),
             ('BOX', (0,0), (-1,-1), 1, colors.HexColor('#cbd5e1')),
             ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor('#e2e8f0')),
-            ('PADDING', (0,0), (-1,-1), 5),
+            ('PADDING', (0,0), (-1,-1), 4),
             ('FONTNAME', (0,0), (-1,-1), 'Helvetica-Bold'),
-            ('FONTSIZE', (0,0), (-1,-1), 8.5),
+            ('FONTSIZE', (0,0), (-1,-1), 8),
             ('TEXTCOLOR', (0,0), (-1,-1), colors.HexColor('#0f172a')),
         ]))
         story.append(t_metrics)
-        story.append(Spacer(1, 6))
+        story.append(Spacer(1, 4))
         
-        # Generate High-End Chart via Matplotlib
-        story.append(Paragraph("Departmental Financial Drain Breakdown (₹ Lakhs)", heading_style))
-        fig, ax = plt.subplots(figsize=(6, 2.0))
+        # 2. High-End Matplotlib Chart
+        story.append(Paragraph("2. Departmental Financial Drain Distribution (₹ Lakhs)", heading_style))
+        fig, ax = plt.subplots(figsize=(6, 1.8))
         depts = ['Assembly Staging', 'Machining Cells', 'Tooling & Maint.', 'Shift Logistics', 'Corporate Sales', 'Admin & HRIS']
         values = [blue_drain_lakhs*0.32, blue_drain_lakhs*0.28, blue_drain_lakhs*0.24, blue_drain_lakhs*0.16, white_drain_lakhs*0.55, white_drain_lakhs*0.45]
         ax.barh(depts, values, color='#1e3a8a')
-        ax.set_xlabel('Financial Drain in ₹ Lakhs', fontsize=8)
-        ax.tick_params(axis='both', labelsize=8)
+        ax.set_xlabel('Financial Drain in ₹ Lakhs', fontsize=7.5)
+        ax.tick_params(axis='both', labelsize=7.5)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.tight_layout()
@@ -294,33 +294,43 @@ elif module_selection == "5. Boardroom Dossier & Export":
         plt.close(fig)
         chart_buffer.seek(0)
         
-        story.append(Image(chart_buffer, width=480, height=160))
-        story.append(Spacer(1, 6))
+        story.append(Image(chart_buffer, width=480, height=140))
+        story.append(Spacer(1, 4))
         
-        # Financial Reconciliation Ledger Table
-        story.append(Paragraph("Financial Reconciliation Ledger & Remediation Status", heading_style))
-        ledger_table_data = [['Audit Vector', 'Source Silos', 'Leakage (₹ Lakhs)', 'Status']]
+        # 3. Financial Reconciliation Ledger Table
+        story.append(Paragraph("3. Financial Reconciliation Ledger & Remediation Status", heading_style))
+        ledger_table_data = [['Audit Vector', 'Source Silos', 'Leakage (₹ Lakhs)', 'Remediation Action']]
         for _, row in ledger_df.iterrows():
             ledger_table_data.append([str(row['Audit Vector']), str(row['Source Silos']), str(row['Financial Leakage (₹ Lakhs)']), str(row['Remediation Status'])])
             
-        t_ledger = Table(ledger_table_data, colWidths=[150, 110, 100, 120])
+        t_ledger = Table(ledger_table_data, colWidths=[140, 110, 95, 135])
         t_ledger.setStyle(TableStyle([
             ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1e3a8a')),
             ('TEXTCOLOR', (0,0), (-1,0), colors.white),
             ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0,0), (-1,0), 8),
+            ('FONTSIZE', (0,0), (-1,0), 7.5),
             ('BACKGROUND', (0,1), (-1,-1), colors.HexColor('#ffffff')),
             ('BOX', (0,0), (-1,-1), 1, colors.HexColor('#cbd5e1')),
             ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor('#e2e8f0')),
-            ('PADDING', (0,0), (-1,-1), 4),
-            ('FONTSIZE', (0,0), (-1,-1), 7.5),
+            ('PADDING', (0,0), (-1,-1), 3.5),
+            ('FONTSIZE', (0,0), (-1,-1), 7),
             ('TEXTCOLOR', (0,1), (-1,-1), colors.HexColor('#0f172a')),
         ]))
         story.append(t_ledger)
-        story.append(Spacer(1, 6))
+        story.append(Spacer(1, 4))
         
-        # Commercial Payback Roadmap
-        story.append(Paragraph("Commercial Payback & Implementation Roadmap", heading_style))
+        # 4. Enterprise Glossary & Definitions Section (New Addition)
+        story.append(Paragraph("4. Executive Glossary & Terminology Index", heading_style))
+        glossary_text = (
+            f"• <b>Cross-Silo Friction Coefficient ({friction_index}%):</b> The quantified operational drag caused by disconnected software systems ({hris_system} and {erp_system}) failing to share real-time telemetry.<br/>"
+            f"• <b>Plant MES:</b> Manufacturing Execution System tracking physical machine activity, power consumption, and assembly line throughput.<br/>"
+            f"• <b>Orphaned SaaS:</b> Active software licenses billed monthly to corporate accounts for personnel who have been inactive for over 60 days."
+        )
+        story.append(Paragraph(glossary_text, body_style))
+        story.append(Spacer(1, 4))
+        
+        # 5. Commercial Payback & Implementation Roadmap
+        story.append(Paragraph("5. Commercial Payback Model & Implementation Roadmap", heading_style))
         roadmap_text = (
             f"<b>ArcheNex Enterprise Tier Investment:</b> ₹35 Lakhs / Year (Achieving a 10x ROI Payback Model)<br/>"
             f"• <b>Phase 1 (Days 1–30):</b> Non-invasive API connector deployment across {client_name}'s plant MES, {hris_system}, and {erp_system} environments.<br/>"
@@ -334,7 +344,7 @@ elif module_selection == "5. Boardroom Dossier & Export":
         return buffer
 
     st.markdown("### 📥 Instant High-End PDF Report Download")
-    st.markdown("Click the button below to instantly download a professional, publication-quality PDF report containing high-end visual charts, financial reconciliation tables, and plain-English executive explanations.")
+    st.markdown("Click the button below to instantly download a professional, publication-quality boardroom PDF report containing high-end visual charts, financial reconciliation tables, an **Executive Glossary**, and plain-English executive explanations.")
     
     pdf_buffer = generate_pdf_report()
     st.download_button(
