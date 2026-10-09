@@ -1,6 +1,0 @@
-streamlit>=1.30.0
-langgraph>=0.1.0
-pandas>=2.0.0
-matplotlib
-reportlab
-numpy
