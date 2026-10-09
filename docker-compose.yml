@@ -1,0 +1,11 @@
+services:
+  archenex:
+    build: .
+    ports: ["8501:8501"]
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    volumes:
+      - archenex-data:/app/data          # persistent audit trail and run history
+      - ./.streamlit/secrets.toml:/app/.streamlit/secrets.toml:ro
+volumes:
+  archenex-data:

@@ -1,0 +1,2 @@
+invoice_id,vendor,invoice_no,invoice_date,amount_inr,paid_date
+AP-1,Apex Tooling,INV/1001,2026-08-01,125000,2026-09-02

@@ -1,0 +1,2 @@
+date,shift,cell,scheduled_hours,active_hours,downtime_reason
+2026-09-01,A,Assembly Line 3,8,5.5,material_staging

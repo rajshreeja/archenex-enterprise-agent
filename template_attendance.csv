@@ -1,0 +1,3 @@
+employee_id,date,shift,cell,paid_hours,hourly_rate,overtime_hours,gate_in
+EMP001,2026-09-01,A,Assembly Line 3,8,150,0,06:05
+EMP002,2026-09-01,A,Assembly Line 3,8,130,2,

@@ -1,0 +1,32 @@
+{
+  "connections": {
+    "hris_exports": {
+      "kind": "files",
+      "folder": "/data/acme",
+      "files": {"attendance": "attendance.csv", "employees": "employees.csv", "payroll": "payroll.csv"}
+    },
+    "erp_replica": {
+      "kind": "sql",
+      "url": "postgresql+psycopg2://${ERP_DB_USER}:${ERP_DB_PASS}@erp-replica.internal:5432/erp",
+      "max_rows": 2000000,
+      "params": {"since": "2026-06-01"},
+      "queries": {
+        "milestones": "SELECT ms_no AS milestone_id, project_code AS project, customer AS client, amount AS value_inr, completion_date AS signoff_date, billed_date AS invoice_date FROM v_milestones WHERE completion_date >= :since",
+        "ap_invoices": "SELECT doc_no AS invoice_id, vendor_name AS vendor, bill_no AS invoice_no, bill_date AS invoice_date, amount AS amount_inr, payment_date AS paid_date FROM v_ap WHERE bill_date >= :since"
+      }
+    },
+    "hris_api": {
+      "kind": "rest",
+      "base_url": "https://YOUR-HRIS-HOST",
+      "auth": {"type": "bearer", "token": "${HRIS_TOKEN}"},
+      "endpoints": {
+        "employees": {
+          "path": "/REPLACE/WITH/VENDOR/ENDPOINT",
+          "records_path": "data.items",
+          "pagination": {"type": "page", "page_param": "page", "size_param": "per_page", "size": 500},
+          "field_map": {"emp_code": "employee_id"}
+        }
+      }
+    }
+  }
+}
