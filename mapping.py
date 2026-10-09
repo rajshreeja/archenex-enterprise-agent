@@ -12,7 +12,7 @@ import difflib
 import numpy as np
 import pandas as pd
 
-from .detectors import REQUIRED, normalise_columns
+from detectors import REQUIRED, normalise_columns
 
 # Common header names seen in HR / ERP / MES exports. These are SUGGESTIONS only; the mapping
 # screen always shows them to a person for confirmation.
