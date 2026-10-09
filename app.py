@@ -1,5 +1,5 @@
 
-    import streamlit as st
+import streamlit as st
 import pandas as pd
 
 # Import directly from the root folder
