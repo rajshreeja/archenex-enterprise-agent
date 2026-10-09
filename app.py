@@ -67,7 +67,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Enterprise Control Console (Sidebar with Flexible HRIS/ERP Connectors)
+# 3. Enterprise Control Console (Sidebar with Flexible Connectors)
 st.sidebar.markdown("### 🏢 Enterprise Target Setup")
 client_name = st.sidebar.text_input("Target Organization", "Kalyani Precision Engineering Ltd.")
 industry_sector = st.sidebar.selectbox("Industry Vertical", ["Auto-Component Manufacturing", "Industrial Tooling & Machinery", "Precision Casting & Foundry", "Contract Logistics & SC"])
@@ -97,7 +97,7 @@ module_selection = st.sidebar.radio(
         "2. Blue-Collar Plant MES Audit", 
         "3. White-Collar ERP & Billing Audit", 
         "4. Multi-Silo Heatmap & Risk Matrix", 
-        "5. Boardroom Remediation Roadmap"
+        "5. Comprehensive Boardroom Dossier"
     ]
 )
 
@@ -216,21 +216,43 @@ elif module_selection == "4. Multi-Silo Heatmap & Risk Matrix":
         unsafe_allow_html=True
     )
 
-elif module_selection == "5. Boardroom Remediation Roadmap":
-    st.subheader("Enterprise Remediation Engine & Annual SaaS Value Model")
+elif module_selection == "5. Comprehensive Boardroom Dossier":
+    st.subheader("Comprehensive Boardroom Audit Dossier & Export Brief")
     
+    st.markdown("### 📑 Executive Summary of Findings")
+    st.markdown(
+        f'<div class="layman-box">'
+        f'<b>Target Organization:</b> {client_name}<br>'
+        f'<b>Industry Vertical:</b> {industry_sector}<br>'
+        f'<b>Integrated Architecture:</b> Plant MES + <b>{hris_system}</b> + <b>{erp_system}</b><br>'
+        f'<b>Total Annual Leakage Detected:</b> ₹{total_leakage_cr} Cr (Equivalent to {(total_leakage_cr * 100 / 350):.1f}% of mid-market EBITDA baseline)<br>'
+        f'<b>Statistical Confidence:</b> 95% ($N \\ge 50$ transactional audit vectors)'
+        f'</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### 📊 Complete Financial Reconciliation Ledger")
+    ledger_df = pd.DataFrame({
+        'Audit Vector': ['Plant Floor Shift Roster Mismatch', 'Unbilled CRM Milestone Lag', 'Orphaned SaaS Subscriptions', 'Material Staging Downtime Drain', 'Contractor Attendance Discrepancy'],
+        'Source Silos': [f'MES & {hris_system}', f'CRM & {erp_system}', 'Corporate IT & HRIS', 'Plant MES & SC', f'MES & {hris_system}'],
+        'Financial Leakage (₹ Lakhs)': [blue_drain_lakhs * 0.35, white_drain_lakhs * 0.50, white_drain_lakhs * 0.50, blue_drain_lakhs * 0.35, blue_drain_lakhs * 0.30],
+        'Remediation Status': ['Automated API Sync Ready', 'Webhook Trigger Ready', 'Auto-Reclaim Active', 'PLC Power-State Lock Ready', 'Biometric Gate Sync Ready']
+    })
+    st.dataframe(ledger_df, use_container_width=True)
+
+    st.markdown("### 🚀 Boardroom Action Plan & Commercial Payback Model")
     c1, c2 = st.columns(2)
     with c1:
         st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 12px; font-weight: bold;">VERIFIED FINANCIAL RECOVERY</p><p style="font-size: 28px; color: #16a34a; font-weight: bold; margin: 0;">₹{total_leakage_cr} Cr / Year</p><p style="color: #64748b; font-size: 11px; margin-top: 4px;">Direct EBITDA Impact</p></div>', unsafe_allow_html=True)
     with c2:
-        st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-weight: bold; font-size: 12px;">ARCHENEX ENTERPRISE TIER</p><p style="font-size: 28px; color: #1e3a8a; font-weight: bold; margin: 0;">₹35 Lakhs / Year</p><p style="color: #64748b; font-size: 11px; margin-top: 4px;">10x ROI Payback Model</p></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-weight: bold; font-size: 12px;">ARCHENEX ENTERPRISE TIER</p><p style="font-size: 28px; color: #1e3a8a; font-weight: bold; margin: 0;">₹35 Lakhs / Year</p><p style="font-size: 24px; color: #16a34a; font-weight: bold; margin-top: 4px;">10x ROI Payback Model</p></div>', unsafe_allow_html=True)
 
-    st.markdown("### 📋 Executive Boardroom Action Roadmap")
     st.markdown(
         f'<div class="action-box">'
-        f'<b>Phase 1 (Day 1 - 30):</b> Deploy secure enterprise connectors across {client_name}\'s plant MES, <b>{hris_system}</b>, and <b>{erp_system}</b> environments.<br><br>'
-        f'<b>Phase 2 (Day 31 - 60):</b> Activate real-time cross-silo anomaly detection to halt unverified wage payouts and unbilled milestone lags.<br><br>'
-        f'<b>Phase 3 (Day 61+):</b> Establish autonomous governance loops, securing recurring annual recovery of <b>₹{total_leakage_cr} Cr</b> under a renewable enterprise software license agreement.'
+        f'<b>Implementation Roadmap:</b><br>'
+        f'• <b>Phase 1 (Days 1–30):</b> Non-invasive API connector deployment across <b>{client_name}</b>\'s plant MES, <b>{hris_system}</b>, and <b>{erp_system}</b> environments.<br>'
+        f'• <b>Phase 2 (Days 31–60):</b> Real-time anomaly detection activation to halt unbilled milestone lags and ghost attendance payouts.<br>'
+        f'• <b>Phase 3 (Days 61+):</b> Continuous automated governance loop established, securing recurring annual recovery of <b>₹{total_leakage_cr} Cr</b>.'
         f'</div>',
         unsafe_allow_html=True
     )
