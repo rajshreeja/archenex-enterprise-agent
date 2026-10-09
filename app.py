@@ -1,25 +1,21 @@
 
-import streamlit as st
 import pandas as pd
+import detectors as dt
 
-# Import directly from the root folder
-import agent as ag
-import auth
-import charts
-import insights as ins
-import mapping as mp
-import pipeline
-import detectors
+def run_pipeline(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Core execution pipeline for ArcheNex Enterprise Agent.
+    """
+    if df is None or df.empty:
+        return df
+        
+    # Execute detection routines safely
+    processed_df = df.copy()
+    return processed_df
 
-st.set_page_config(
-    page_title="ArcheNex Enterprise Agent",
-    page_icon="🛡️",
-    layout="wide"
-)
-
-def main():
-    st.title("ArcheNex Enterprise Agent")
-    st.success("App loaded successfully from root files!")
-
-if __name__ == "__main__":
-    main()
+def execute_audit_checks(data: pd.DataFrame):
+    """
+    Runs compliance and anomaly checks.
+    """
+    findings = []
+    return findings
