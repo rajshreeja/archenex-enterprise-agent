@@ -1,11 +1,12 @@
-"""ArcheNex Enterprise Intelligence: Streamlit app (v3)."""
 import os
 import sys
+
+# Explicitly add the root directory to Python's search path
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
 import streamlit as st
 import pandas as pd
-
-# Standard package import (works automatically once setup.py is added)
-import agent as ag
+import archenex.agent as ag
 import hashlib
 import html
 import io
