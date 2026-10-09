@@ -109,7 +109,7 @@ module_selection = st.sidebar.radio(
 )
 
 # Main Title Header
-st.markdown(f"### ARCHENEX ENTERPRISE GOVERNANCE & AUTONOMOUS AUDIT SUITE")
+st.markdown("### ARCHENEX ENTERPRISE GOVERNANCE & AUTONOMOUS AUDIT SUITE")
 st.markdown(f"**Client Profile:** {client_name} | **Active Connectors:** {hris_system} + {erp_system} | **Status:** <span style='color:#16a34a; font-weight:bold;'>CONTINUOUS GOVERNANCE ACTIVE</span>", unsafe_allow_html=True)
 st.markdown("---")
 
@@ -139,112 +139,4 @@ if module_selection == "1. Executive Master Cockpit":
         unsafe_allow_html=True
     )
 
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.markdown("#### Departmental Financial Drain Breakdown (₹ Lakhs)")
-        dept_df = pd.DataFrame({
-            'Financial Drain (₹ Lakhs)': [blue_drain_lakhs*0.32, blue_drain_lakhs*0.28, blue_drain_lakhs*0.24, blue_drain_lakhs*0.16, white_drain_lakhs*0.55, white_drain_lakhs*0.45]
-        }, index=['Assembly Staging', 'Machining Cells', 'Tooling & Maint.', 'Shift Logistics', 'Corporate Sales', 'Admin & HRIS'])
-        st.bar_chart(dept_df, color="#1e3a8a")
-
-    with col_b:
-        st.markdown("#### Quarterly Recovery Trajectory (Pre vs Post ArcheNex)")
-        trend_df = pd.DataFrame({
-            'Baseline Leakage (₹ Cr)': [total_leakage_cr * 1.25, total_leakage_cr * 1.15, total_leakage_cr],
-            'Post-Recovery Leakage (₹ Cr)': [total_leakage_cr * 1.25, total_leakage_cr * 0.60, total_leakage_cr * 0.15]
-        }, index=['Q1 (Pre-Audit)', 'Q2 (Implementation)', 'Q3 (Optimized)'])
-        st.line_chart(trend_df, color=["#dc2626", "#16a34a"])
-
-elif module_selection == "2. Granular Transactional Audit Log":
-    st.subheader("Granular Line-Item Transactional Audit Feed")
-    st.markdown("Real-time anomaly detection stream correlating operational logs across plant hardware, HRIS attendance, and enterprise billing systems.")
-
-    np.random.seed(42)
-    timestamps = [datetime.now() - timedelta(hours=np.random.randint(1, 72)) for _ in range(25)]
-    sectors = ['Assembly Line 3', 'CNC Machining Cell 1', 'Tooling Maintenance', 'Corporate Billing', 'Shift Logistics']
-    anomaly_types = ['Ghost Attendance Match Failure', 'Unbilled CRM Milestone Lag', 'Idle Staging Payout Variance', 'Orphaned SaaS License Active', 'Overtime Discrepancy']
-    
-    log_data = pd.DataFrame({
-        'Timestamp': [t.strftime('%Y-%m-%d %H:%M') for t in timestamps],
-        'Cell / Dept': np.random.choice(sectors, 25),
-        'Anomaly Flag': np.random.choice(anomaly_types, 25),
-        'Source Silos': [f'MES vs {hris_system}' if i % 2 == 0 else f'CRM vs {erp_system}' for i in range(25)],
-        'Impact (₹)': np.random.randint(15000, 240000, 25),
-        'Status': np.random.choice(['Flagged for Review', 'Auto-Paused', 'Reconciled'], 25, p=[0.5, 0.3, 0.2])
-    })
-    
-    st.dataframe(log_data, use_container_width=True)
-    
-    st.markdown(
-        f'<div class="layman-box"><b>How to read this table:</b> Every single row represents an operational mismatch caught between your physical plant systems and your corporate software. Instead of waiting for an end-of-year manual audit, ArcheNex flags these discrepancies instantly.</div>',
-        unsafe_allow_html=True
-    )
-
-elif module_selection == "3. Plant MES & HRIS Deep-Dive":
-    st.subheader(f"Plant MES & {hris_system} Deep-Dive Analysis")
-    
-    overtime_cost = round(blue_drain_lakhs * 0.6, 1)
-    ghost_cost = round(blue_drain_lakhs * 0.4, 1)
-    idle_hrs = int(headcount_blue * 0.18)
-
-    c1, c2, c3 = st.columns(3)
-    c1.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">IDLE STAGING HOURS</p><p style="font-size: 22px; color: #1e3a8a; font-weight: bold;">{idle_hrs} Hours/Mo</p></div>', unsafe_allow_html=True)
-    c2.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">GHOST ATTENDANCE COST</p><p style="font-size: 22px; color: #dc2626; font-weight: bold;">₹{ghost_cost} Lakhs</p></div>', unsafe_allow_html=True)
-    c3.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">OVERTIME DISCREPANCY</p><p style="font-size: 22px; color: #2563eb; font-weight: bold;">₹{overtime_cost} Lakhs</p></div>', unsafe_allow_html=True)
-
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("#### Shift-wise Efficiency vs Idle Time (%)")
-        shift_df = pd.DataFrame({
-            'Active Production Rate (%)': [91, 78, 65],
-            'Forced Staging Idle (%)': [9, 22, 35]
-        }, index=['Shift A (Morning)', 'Shift B (Evening)', 'Shift C (Night Cleanroom)'])
-        st.bar_chart(shift_df, color=["#1e3a8a", "#dc2626"])
-
-    with col_2:
-        st.markdown("### 🔍 Granular Root-Cause Breakdown")
-        st.markdown(f'<div class="layman-box"><b>What is happening?</b> Assembly line #4 experienced chronic parts staging delays. Because your <b>{hris_system}</b> attendance system and plant machine logs do not talk to each other, workers logged in at the gate are paid for full shifts even when assembly lines sit idle waiting for raw materials.</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="action-box"><b>How we fix it:</b> We connect ArcheNex via secure API to your <b>{hris_system}</b> instance. If machine power logs show downtime due to staging delays, shift payroll tracking automatically pauses until parts arrive.</div>', unsafe_allow_html=True)
-
-elif module_selection == "4. ERP & Billing Reconciliation":
-    st.subheader(f"{erp_system} & Corporate Workflow Reconciliation")
-    
-    unbilled_milestones = round(white_drain_lakhs * 0.65, 1)
-    orphaned_saas = round(white_drain_lakhs * 0.35, 1)
-
-    c1, c2, c3 = st.columns(3)
-    c1.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">AVG INVOICING LAG</p><p style="font-size: 22px; color: #1e3a8a; font-weight: bold;">19 Business Days</p></div>', unsafe_allow_html=True)
-    c2.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">UNBILLED MILESTONES</p><p style="font-size: 22px; color: #dc2626; font-weight: bold;">₹{unbilled_milestones} Lakhs</p></div>', unsafe_allow_html=True)
-    c3.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">ORPHANED SAAS LICENSES</p><p style="font-size: 22px; color: #2563eb; font-weight: bold;">₹{orphaned_saas} Lakhs</p></div>', unsafe_allow_html=True)
-
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("#### Milestone Approval to Invoicing Delay (Days)")
-        lag_df = pd.DataFrame({
-            'Average Delay (Days)': [0, 5, 12, 19]
-        }, index=['Project Sign-off', 'Technical Review', 'Finance Compliance', f'{erp_system} Invoice Dispatch'])
-        st.bar_chart(lag_df, color="#2563eb")
-
-    with col_2:
-        st.markdown("### 🔍 Granular Root-Cause Breakdown")
-        st.markdown(f'<div class="layman-box"><b>What is happening?</b> When your consulting and technical teams finish a project milestone, it sits in administrative limbo for 19 days before someone manually inputs it into <b>{erp_system}</b> to generate an invoice. Simultaneously, your organization continues paying software subscriptions for personnel who haven\'t logged in for 60+ days.</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="action-box"><b>How we fix it:</b> We configure automated API triggers with <b>{erp_system}</b> so client invoices are generated the exact second a milestone is digitally signed off, while inactive SaaS licenses are auto-reclaimed.</div>', unsafe_allow_html=True)
-
-elif module_selection == "5. Boardroom Dossier & Export":
-    st.subheader("Comprehensive Boardroom Audit Dossier & High-End PDF Generator")
-    
-    # PDF Generation Engine using ReportLab & Matplotlib
-    def generate_pdf_report():
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
-        story = []
-        styles = getSampleStyleSheet()
-        
-        title_style = ParagraphStyle('DocTitle', parent=styles['Heading1'], fontSize=16, textColor=colors.HexColor('#1e3a8a'), spaceAfter=4)
-        subtitle_style = ParagraphStyle('DocSubtitle', parent=styles['Normal'], fontSize=9, textColor=colors.HexColor('#64748b'), spaceAfter=12)
-        heading_style = ParagraphStyle('SectionHeading', parent=styles['Heading2'], fontSize=11, textColor=colors.HexColor('#2563eb'), spaceBefore=8, spaceAfter=4)
-        body_style = ParagraphStyle('BodyTextCustom', parent=styles['Normal'], fontSize=8.5, textColor=colors.HexColor('#0f172a'), leading=12, spaceAfter=6)
-        
-        # Header
-        story.append(Paragraph("ARCHENEX ENTERPRISE AUDIT DOSSIER", title_style))
-        story.append(Paragraph(f"<b>Client Profile:</b> {client_name} | <b>Sector:</b> {industry_sector}<br/><b>Connectors:</b> {hris_system
+    col_a, col_b = st.columns(2
