@@ -17,7 +17,7 @@ import zipfile
 import pandas as pd
 import streamlit as st
 
-from archenex import agent as ag
+import agent as ag
 from archenex import auth, charts, insights as ins, mapping as mp, pipeline, store
 from archenex import detectors as dt
 from archenex.connectors import build_connectors, read_table
