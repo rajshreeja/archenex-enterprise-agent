@@ -5,7 +5,7 @@ import streamlit as st
 import pandas as pd
 
 # Standard package import (works automatically once setup.py is added)
-import archenex.agent as ag
+import agent as ag
 import hashlib
 import html
 import io
