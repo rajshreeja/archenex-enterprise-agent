@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from .detectors import Finding, inr
+from detectors import Finding, inr
 
 
 def _weekly(ev: pd.DataFrame) -> pd.Series:
