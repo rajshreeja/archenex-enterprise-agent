@@ -14,7 +14,7 @@ import re
 
 import pandas as pd
 
-from .detectors import Finding, inr
+from detectors import Finding, inr
 
 
 def _factor(f: Finding) -> float:
