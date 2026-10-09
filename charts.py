@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from .detectors import Finding
+from detectors import Finding
 
 NAVY, BLUE, SLATE, RED, GREEN, AMBER = "#1e3a8a", "#2563eb", "#94a3b8", "#dc2626", "#16a34a", "#d97706"
 _LAYOUT = dict(template="plotly_white", font=dict(family="Inter, Arial", size=12),
