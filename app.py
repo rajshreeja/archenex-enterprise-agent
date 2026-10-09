@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 import streamlit as st
 import pandas as pd
-import archenex.agent as ag
+import agent as ag
 import hashlib
 import html
 import io
