@@ -18,8 +18,11 @@ import pandas as pd
 import streamlit as st
 
 import agent as ag
-from archenex import auth, charts, insights as ins, mapping as mp, pipeline, store
-from archenex import detectors as dt
+import auth
+import charts
+import insights as ins
+import mapping as mp
+import pipeline
 from archenex.connectors import build_connectors, read_table
 from archenex.demo_data import make_demo, templates
 from archenex.dispatch import send
