@@ -1,8 +1,13 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import base64
+import matplotlib.pyplot as plt
+import io
 from datetime import datetime, timedelta
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
 
 # 1. Page Configuration
 st.set_page_config(
@@ -107,6 +112,14 @@ module_selection = st.sidebar.radio(
 st.markdown(f"### ARCHENEX ENTERPRISE GOVERNANCE & AUTONOMOUS AUDIT SUITE")
 st.markdown(f"**Client Profile:** {client_name} | **Active Connectors:** {hris_system} + {erp_system} | **Status:** <span style='color:#16a34a; font-weight:bold;'>CONTINUOUS GOVERNANCE ACTIVE</span>", unsafe_allow_html=True)
 st.markdown("---")
+
+# Ledger DataFrame definition for reuse
+ledger_df = pd.DataFrame({
+    'Audit Vector': ['Plant Floor Shift Roster Mismatch', 'Unbilled CRM Milestone Lag', 'Orphaned SaaS Subscriptions', 'Material Staging Downtime Drain', 'Contractor Attendance Discrepancy'],
+    'Source Silos': [f'MES & {hris_system}', f'CRM & {erp_system}', 'Corporate IT & HRIS', 'Plant MES & SC', f'MES & {hris_system}'],
+    'Financial Leakage (₹ Lakhs)': [round(blue_drain_lakhs * 0.35, 1), round(white_drain_lakhs * 0.50, 1), round(white_drain_lakhs * 0.50, 1), round(blue_drain_lakhs * 0.35, 1), round(blue_drain_lakhs * 0.30, 1)],
+    'Remediation Status': ['Automated API Sync Ready', 'Webhook Trigger Ready', 'Auto-Reclaim Active', 'PLC Power-State Lock Ready', 'Biometric Gate Sync Ready']
+})
 
 if module_selection == "1. Executive Master Cockpit":
     st.subheader("Executive Master Cockpit: Financial Leakage & Cross-Silo Health")
@@ -218,102 +231,20 @@ elif module_selection == "4. ERP & Billing Reconciliation":
         st.markdown(f'<div class="action-box"><b>How we fix it:</b> We configure automated API triggers with <b>{erp_system}</b> so client invoices are generated the exact second a milestone is digitally signed off, while inactive SaaS licenses are auto-reclaimed.</div>', unsafe_allow_html=True)
 
 elif module_selection == "5. Boardroom Dossier & Export":
-    st.subheader("Comprehensive Boardroom Audit Dossier & Layman Report Generator")
+    st.subheader("Comprehensive Boardroom Audit Dossier & High-End PDF Generator")
     
-    # Generate Word Document (.docx format via MIME Base64)
-    def get_docx_download_link():
-        html_content = f"""
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head><meta charset='utf-8'><title>ArcheNex Executive Audit Dossier</title></head>
-        <body style='font-family: Arial, sans-serif; color: #0f172a; line-height: 1.6; padding: 20px;'>
-            <h1 style='color: #1e3a8a; border-bottom: 3px solid #1e3a8a; padding-bottom: 10px;'>ARCHENEX EXECUTIVE AUDIT DOSSIER</h1>
-            <p><strong>Target Organization:</strong> {client_name}<br>
-            <strong>Industry Sector:</strong> {industry_sector}<br>
-            <strong>Active Connectors:</strong> {hris_system} (HRIS / Attendance) & {erp_system} (ERP / Billing)<br>
-            <strong>Report Date:</strong> {datetime.now().strftime('%Y-%m-%d')}</p>
-            
-            <div style='background-color: #eff6ff; border-left: 5px solid #2563eb; padding: 15px; margin: 20px 0;'>
-                <h3 style='color: #1e3a8a; margin-top: 0;'>Plain English Executive Summary (The Big Picture)</h3>
-                <p>Your factory floor acts like an engine while your corporate office acts as the steering wheel. Currently, they operate in silos. When machine parts are delayed on the floor, workers wait idly—yet your <strong>{hris_system}</strong> attendance system continues paying full wages. Simultaneously, completed projects wait weeks before <strong>{erp_system}</strong> generates invoices. ArcheNex bridges these gaps to safely recover <strong>₹{total_leakage_cr} Cr</strong> annually without headcount reductions.</p>
-            </div>
-            
-            <h2 style='color: #2563eb;'>1. Key Financial Leakage Breakdown</h2>
-            <ul>
-                <li><strong>Total Annual Leakage Identified:</strong> ₹{total_leakage_cr} Cr</li>
-                <li><strong>Plant Floor Drain ({hris_system}):</strong> ₹{blue_drain_lakhs} Lakhs (Shift roster mismatches & idle staging payouts)</li>
-                <li><strong>Corporate Office Gap ({erp_system}):</strong> ₹{white_drain_lakhs} Lakhs (Invoicing delays & orphaned SaaS subscriptions)</li>
-                <li><strong>Systemic Friction Index:</strong> {friction_index}%</li>
-            </ul>
-            
-            <h2 style='color: #2563eb;'>2. Financial Reconciliation & Action Ledger</h2>
-            <table border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse; border-color: #cbd5e1; width: 100%;'>
-                <tr style='background-color: #f8fafc;'>
-                    <th>Audit Vector</th><th>Integrated Silos</th><th>Leakage (₹ Lakhs)</th><th>Layman Explanation & Fix</th>
-                </tr>
-                <tr>
-                    <td>Shift Roster Mismatch</td>
-                    <td>MES & {hris_system}</td>
-                    <td>₹{round(blue_drain_lakhs * 0.35, 1)}</td>
-                    <td>Workers paid during unverified line stoppages. Automatically paused via live sensor sync.</td>
-                </tr>
-                <tr>
-                    <td>Unbilled Milestone Lag</td>
-                    <td>CRM & {erp_system}</td>
-                    <td>₹{round(white_drain_lakhs * 0.50, 1)}</td>
-                    <td>Completed milestones sit in administrative limbo before invoicing. Resolved with instant webhook triggers.</td>
-                </tr>
-                <tr>
-                    <td>Orphaned SaaS Subscriptions</td>
-                    <td>IT & {hris_system}</td>
-                    <td>₹{round(white_drain_lakhs * 0.50, 1)}</td>
-                    <td>Paying for software licenses of inactive personnel. Auto-reclaimed monthly.</td>
-                </tr>
-            </table>
-            
-            <h2 style='color: #2563eb;'>3. Commercial Payback & Implementation Roadmap</h2>
-            <p><strong>ArcheNex Enterprise Tier Investment:</strong> ₹35 Lakhs / Year (Achieving a 10x ROI Payback Model)</p>
-            <ul>
-                <li><strong>Phase 1 (Days 1–30):</strong> Non-invasive API connector deployment across {client_name}'s plant MES, {hris_system}, and {erp_system} environments.</li>
-                <li><strong>Phase 2 (Days 31–60):</strong> Real-time anomaly detection activation to halt unverified wage payouts and invoice lags.</li>
-                <li><strong>Phase 3 (Days 61+):</strong> Autonomous governance loop established, securing recurring annual recovery of ₹{total_leakage_cr} Cr.</li>
-            </ul>
-        </body>
-        </html>
-        """
-        b64 = base64.b64encode(html_content.encode('utf-8')).decode("utf-8")
-        return f'<a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64}" download="ArcheNex_Executive_Audit_Dossier_{client_name.replace(" ", "_")}.docx" style="display:inline-block; background-color:#1e3a8a; color:white; padding:12px 24px; text-decoration:none; border-radius:4px; font-weight:600; text-align:center; width:100%;">📥 Direct Download Word Document (.docx) Report</a>'
-
-    st.markdown("### 📥 Instant Boardroom Word Report (.docx)")
-    st.markdown("Click the button below to instantly trigger a direct download of your boardroom-ready Microsoft Word report. It includes all technical metrics, HRIS/ERP integration states, and plain-English summaries.")
-    
-    # Render the direct download HTML button
-    st.markdown(get_docx_download_link(), unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("### 📑 Executive Summary of Findings")
-    st.markdown(
-        f'<div class="layman-box">'
-        f'<b>Target Organization:</b> {client_name}<br>'
-        f'<b>Industry Vertical:</b> {industry_sector}<br>'
-        f'<b>Integrated Architecture:</b> Plant MES + <b>{hris_system}</b> + <b>{erp_system}</b><br>'
-        f'<b>Total Annual Leakage Detected:</b> ₹{total_leakage_cr} Cr (Equivalent to {(total_leakage_cr * 100 / 350):.1f}% of mid-market EBITDA baseline)<br>'
-        f'<b>Statistical Confidence:</b> 95% (N >= 50 transactional audit vectors)'
-        f'</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown("### 📊 Complete Financial Reconciliation Ledger")
-    ledger_df = pd.DataFrame({
-        'Audit Vector': ['Plant Floor Shift Roster Mismatch', 'Unbilled CRM Milestone Lag', 'Orphaned SaaS Subscriptions', 'Material Staging Downtime Drain', 'Contractor Attendance Discrepancy'],
-        'Source Silos': [f'MES & {hris_system}', f'CRM & {erp_system}', 'Corporate IT & HRIS', 'Plant MES & SC', f'MES & {hris_system}'],
-        'Financial Leakage (₹ Lakhs)': [blue_drain_lakhs * 0.35, white_drain_lakhs * 0.50, white_drain_lakhs * 0.50, blue_drain_lakhs * 0.35, blue_drain_lakhs * 0.30],
-        'Remediation Status': ['Automated API Sync Ready', 'Webhook Trigger Ready', 'Auto-Reclaim Active', 'PLC Power-State Lock Ready', 'Biometric Gate Sync Ready']
-    })
-    st.dataframe(ledger_df, use_container_width=True)
-
-    st.markdown("### 🚀 Commercial Payback Model")
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 12px; font-weight: bold;">VERIFIED FINANCIAL RECOVERY</p><p style="font-size: 28px; color: #16a34a; font-weight: bold; margin: 0;">₹{total_leakage_cr} Cr / Year</p><p style="color: #64748b; font-size: 11px; margin-top: 4px;">Direct EBITDA Impact</p></div>', unsafe_allow_html=True)
-    with c2:
-        st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-weight: bold; font-size: 12px;">ARCHENEX ENTERPRISE TIER</p><p style="font-size: 28px; color: #1e3a8a; font-weight: bold; margin: 0;">₹35 Lakhs / Year</p><p style="font-size: 20px; color: #16a34a; font-weight: bold; margin-top: 4px;">10x ROI Payback Model</p></div>', unsafe_allow_html=True)
+    # PDF Generation Engine using ReportLab & Matplotlib
+    def generate_pdf_report():
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
+        story = []
+        styles = getSampleStyleSheet()
+        
+        title_style = ParagraphStyle('DocTitle', parent=styles['Heading1'], fontSize=16, textColor=colors.HexColor('#1e3a8a'), spaceAfter=4)
+        subtitle_style = ParagraphStyle('DocSubtitle', parent=styles['Normal'], fontSize=9, textColor=colors.HexColor('#64748b'), spaceAfter=12)
+        heading_style = ParagraphStyle('SectionHeading', parent=styles['Heading2'], fontSize=11, textColor=colors.HexColor('#2563eb'), spaceBefore=8, spaceAfter=4)
+        body_style = ParagraphStyle('BodyTextCustom', parent=styles['Normal'], fontSize=8.5, textColor=colors.HexColor('#0f172a'), leading=12, spaceAfter=6)
+        
+        # Header
+        story.append(Paragraph("ARCHENEX ENTERPRISE AUDIT DOSSIER", title_style))
+        story.append(Paragraph(f"<b>Client Profile:</b> {client_name} | <b>Sector:</b> {industry_sector}<br/><b>Connectors:</b> {hris_system
