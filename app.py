@@ -1,8 +1,7 @@
-import streamlit as st
+
+   import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
 
 # 1. Page Configuration
 st.set_page_config(
@@ -130,23 +129,17 @@ if module_selection == "1. Executive Master Cockpit":
     with col_a:
         st.markdown("#### Departmental Financial Drain Breakdown (₹ Lakhs)")
         dept_df = pd.DataFrame({
-            'Department': ['Assembly Staging', 'Machining Cells', 'Tooling & Maint.', 'Shift Logistics', 'Corporate Sales', 'Admin & HRIS'],
             'Financial Drain (₹ Lakhs)': [blue_drain_lakhs*0.32, blue_drain_lakhs*0.28, blue_drain_lakhs*0.24, blue_drain_lakhs*0.16, white_drain_lakhs*0.55, white_drain_lakhs*0.45]
-        })
-        fig_bar = px.bar(dept_df, x='Department', y='Financial Drain (₹ Lakhs)', color='Financial Drain (₹ Lakhs)', color_continuousScale='Blues')
-        fig_bar.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=320)
-        st.plotly_chart(fig_bar, use_container_width=True)
+        }, index=['Assembly Staging', 'Machining Cells', 'Tooling & Maint.', 'Shift Logistics', 'Corporate Sales', 'Admin & HRIS'])
+        st.bar_chart(dept_df, color="#1e3a8a")
 
     with col_b:
         st.markdown("#### Quarterly Recovery Trajectory (Pre vs Post ArcheNex)")
         trend_df = pd.DataFrame({
-            'Quarter': ['Q1 (Pre-Audit)', 'Q2 (Implementation)', 'Q3 (Optimized)'],
             'Baseline Leakage (₹ Cr)': [total_leakage_cr * 1.25, total_leakage_cr * 1.15, total_leakage_cr],
             'Post-Recovery Leakage (₹ Cr)': [total_leakage_cr * 1.25, total_leakage_cr * 0.60, total_leakage_cr * 0.15]
-        })
-        fig_line = px.line(trend_df, x='Quarter', y=['Baseline Leakage (₹ Cr)', 'Post-Recovery Leakage (₹ Cr)'], markers=True, color_discrete_sequence=['#dc2626', '#16a34a'])
-        fig_line.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=320)
-        st.plotly_chart(fig_line, use_container_width=True)
+        }, index=['Q1 (Pre-Audit)', 'Q2 (Implementation)', 'Q3 (Optimized)'])
+        st.line_chart(trend_df, color=["#dc2626", "#16a34a"])
 
 elif module_selection == "2. Blue-Collar Plant MES Audit":
     st.subheader(f"Blue-Collar Audit: Plant Floor & {hris_system} Integration")
@@ -164,13 +157,10 @@ elif module_selection == "2. Blue-Collar Plant MES Audit":
     with col_1:
         st.markdown("#### Shift-wise Efficiency vs Idle Time (%)")
         shift_df = pd.DataFrame({
-            'Shift': ['Shift A (Morning)', 'Shift B (Evening)', 'Shift C (Night Cleanroom)'],
             'Active Production Rate (%)': [91, 78, 65],
             'Forced Staging Idle (%)': [9, 22, 35]
-        })
-        fig_shift = px.bar(shift_df, x='Shift', y=['Active Production Rate (%)', 'Forced Staging Idle (%)'], barmode='group', color_discrete_sequence=['#1e3a8a', '#dc2626'])
-        fig_shift.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=300)
-        st.plotly_chart(fig_shift, use_container_width=True)
+        }, index=['Shift A (Morning)', 'Shift B (Evening)', 'Shift C (Night Cleanroom)'])
+        st.bar_chart(shift_df, color=["#1e3a8a", "#dc2626"])
 
     with col_2:
         st.markdown("### 🔍 Granular Root-Cause Breakdown")
@@ -190,14 +180,11 @@ elif module_selection == "3. White-Collar ERP & Billing Audit":
 
     col_1, col_2 = st.columns(2)
     with col_1:
-        st.markdown("#### Milestone Approval to Invoicing Funnel (Days)")
+        st.markdown("#### Milestone Approval to Invoicing Delay (Days)")
         lag_df = pd.DataFrame({
-            'Milestone Stage': ['Project Sign-off', 'Technical Review', 'Finance Compliance', f'{erp_system} Invoice Dispatch'],
             'Average Delay (Days)': [0, 5, 12, 19]
-        })
-        fig_funnel = px.funnel(lag_df, x='Average Delay (Days)', y='Milestone Stage', color_discrete_sequence=['#2563eb'])
-        fig_funnel.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=300)
-        st.plotly_chart(fig_funnel, use_container_width=True)
+        }, index=['Project Sign-off', 'Technical Review', 'Finance Compliance', f'{erp_system} Invoice Dispatch'])
+        st.bar_chart(lag_df, color="#2563eb")
 
     with col_2:
         st.markdown("### 🔍 Granular Root-Cause Breakdown")
@@ -209,28 +196,21 @@ elif module_selection == "4. Multi-Silo Heatmap & Risk Matrix":
     
     col_1, col_2 = st.columns(2)
     with col_1:
-        st.markdown("#### Data Silo Discrepancy Heatmap")
-        matrix_data = pd.DataFrame(
-            [[1.00, 0.79, 0.42, 0.31], [0.79, 1.00, 0.58, 0.49], [0.42, 0.58, 1.00, 0.84], [0.31, 0.49, 0.84, 1.00]],
-            index=['Plant MES', f'{hris_system}', f'{erp_system}', 'CRM Milestones'],
-            columns=['Plant MES', f'{hris_system}', f'{erp_system}', 'CRM Milestones']
-        )
-        fig_heat = px.imshow(matrix_data, text_auto=True, color_continuousScale='Blues', aspect='auto')
-        fig_heat.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=320)
-        st.plotly_chart(fig_heat, use_container_width=True)
+        st.markdown("#### Data Silo Correlation Matrix Table")
+        matrix_data = pd.DataFrame({
+            'Plant MES': [1.00, 0.79, 0.42, 0.31],
+            f'{hris_system}': [0.79, 1.00, 0.58, 0.49],
+            f'{erp_system}': [0.42, 0.58, 1.00, 0.84],
+            'CRM Milestones': [0.31, 0.49, 0.84, 1.00]
+        }, index=['Plant MES', f'{hris_system}', f'{erp_system}', 'CRM Milestones'])
+        st.dataframe(matrix_data, use_container_width=True)
 
     with col_2:
-        st.markdown("#### Risk Probability vs Financial Impact Scatter Plot")
+        st.markdown("#### Vulnerability Financial Impact (₹ Lakhs)")
         risk_df = pd.DataFrame({
-            'Vulnerability': ['Shift Roster Mismatch', 'Unbilled CRM Milestones', 'Orphaned SaaS Subscriptions', 'Material Staging Delay', 'Ghost Contractor Logs'],
-            'Impact (₹ Lakhs)': [45, 38, 22, 50, 65],
-            'Probability (%)': [85, 90, 70, 60, 40],
-            'Risk Severity': ['High', 'Critical', 'Medium', 'Medium', 'High']
-        })
-        fig_scatter = px.scatter(risk_df, x='Probability (%)', y='Impact (₹ Lakhs)', size='Impact (₹ Lakhs)', color='Risk Severity', text='Vulnerability', color_discrete_map={'Critical':'#dc2626', 'High':'#ea580c', 'Medium':'#ca8a04'})
-        fig_scatter.update_traces(textposition='top center')
-        fig_scatter.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=20, b=20, l=20, r=20), height=320)
-        st.plotly_chart(fig_scatter, use_container_width=True)
+            'Financial Impact (₹ Lakhs)': [45, 38, 22, 50, 65]
+        }, index=['Shift Roster Mismatch', 'Unbilled CRM Milestones', 'Orphaned SaaS Subscriptions', 'Material Staging Delay', 'Ghost Contractor Logs'])
+        st.bar_chart(risk_df, color="#dc2626")
 
     st.markdown(
         f'<div class="layman-box"><b>Audit Defensibility:</b> Evaluated across <b>{headcount_blue * 14} transactional data points</b> (N &ge; 50) with a 95% statistical confidence interval. Integrated seamlessly with <b>{hris_system}</b> and <b>{erp_system}</b> without custom database overhauls.</div>',
