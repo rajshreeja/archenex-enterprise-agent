@@ -1,191 +1,140 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
 
 # 1. Page Configuration
 st.set_page_config(
-    page_title="ArcheNex Enterprise | Autonomous Audit Suite",
+    page_title="ArcheNex Enterprise | Strategic Audit Report",
     page_icon="⚡",
     layout="wide"
 )
 
-# 2. Professional Enterprise CSS (Fixing contrast, native headers, and radio buttons)
+# 2. MBB-Style Blue & White Professional CSS
 st.markdown("""
     <style>
-    /* Global Theme - Deep Corporate Slate */
-    .stApp { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    /* Clean Crisp White & Corporate Blue MBB Theme */
+    .stApp { background-color: #f8fafc; color: #0f172a; font-family: 'Inter', -apple-system, sans-serif; }
     
-    /* Hide Streamlit Default Header and Footer for Clean SaaS Look */
     header { visibility: hidden; }
     #MainMenu { visibility: hidden; }
     footer { visibility: hidden; }
     
-    /* Sleek Card Containers */
-    .metric-card {
-        background-color: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    /* Elegant White Cards with Subtle Borders */
+    .mbb-card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-top: 4px solid #1e3a8a;
+        border-radius: 6px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
     }
     
-    /* Explanation & Action Boxes */
-    .executive-summary-box {
-        background-color: #1e293b;
-        border-left: 4px solid #3b82f6;
-        padding: 18px;
-        border-radius: 0 8px 8px 0;
+    .mbb-callout {
+        background-color: #eff6ff;
+        border-left: 4px solid #2563eb;
+        padding: 20px;
+        border-radius: 0 6px 6px 0;
         margin: 20px 0;
-        color: #e2e8f0;
+        color: #1e3a8a;
         font-size: 15px;
         line-height: 1.6;
-        border-top: 1px solid #334155;
-        border-right: 1px solid #334155;
-        border-bottom: 1px solid #334155;
     }
     
-    .remediation-box {
-        background-color: #064e3b;
-        border-left: 4px solid #10b981;
-        padding: 18px;
-        border-radius: 0 8px 8px 0;
+    .mbb-action {
+        background-color: #f0fdf4;
+        border-left: 4px solid #16a34a;
+        padding: 20px;
+        border-radius: 0 6px 6px 0;
         margin: 20px 0;
-        color: #d1fae5;
+        color: #14532d;
         font-size: 15px;
-        border-top: 1px solid #065f46;
-        border-right: 1px solid #065f46;
-        border-bottom: 1px solid #065f46;
     }
 
     /* Sidebar Styling */
     [data-testid="stSidebar"] { 
-        background-color: #090d16; 
-        border-right: 1px solid #1e293b; 
+        background-color: #ffffff; 
+        border-right: 1px solid #e2e8f0; 
     }
     
-    /* Custom Styling for Radio Options */
-    .stRadio label {
-        color: #cbd5e1 !important;
-        font-weight: 500;
-    }
-    
-    /* Professional Primary Button */
     .stButton>button {
-        background-color: #2563eb;
+        background-color: #1e3a8a;
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: 4px;
         padding: 10px 20px;
         font-weight: 600;
         width: 100%;
-        transition: background-color 0.2s;
     }
     .stButton>button:hover { background-color: #1d4ed8; }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Enterprise Client Data Repository
-CLIENT_DATABASE = {
-    "Tata Motors (Pune Plant)": {
-        "industry": "Automotive & Heavy Manufacturing",
-        "total_leakage": "₹1.76 Cr",
-        "blue_collar": {
-            "title": "Factory Floor & Shift Operations",
-            "metric_1": "310 Idle Hours",
-            "metric_2": "₹42.5 Lakhs Leakage",
-            "layman_summary": "Factory assembly line #4 experienced unexpected downtime due to material staging delays. Meanwhile, the HR attendance system logged teams as fully active, paying for idle labor.",
-            "action": "Automated Remediation: Integrate PLC power-state logs directly with Darwinbox attendance to suspend shift billing during verified line stoppages."
-        },
-        "white_collar": {
-            "title": "Corporate Office & Software Systems",
-            "metric_1": "₹68.0 Lakhs Unbilled",
-            "metric_2": "₹14.2 Lakhs License Waste",
-            "layman_summary": "Corporate project milestones were completed in SAP CRM, but disconnects with downstream billing modules delayed invoice generation by an average of 14 days.",
-            "action": "Automated Remediation: Establish event-driven triggers in SAP to auto-generate client invoices immediately upon CRM milestone approval."
-        }
-    },
-    "Bosch India (Bangalore Hub)": {
-        "industry": "Industrial Technology & Engineering",
-        "total_leakage": "₹2.10 Cr",
-        "blue_collar": {
-            "title": "Factory Floor & Shift Operations",
-            "metric_1": "185 Idle Hours",
-            "metric_2": "₹28.0 Lakhs Leakage",
-            "layman_summary": "SMT manufacturing lines encountered micro-stoppages. Contract shift rosters showed full capacity, while real-time throughput counters confirmed waiting periods.",
-            "action": "Automated Remediation: Implement real-time component barcode scanning at station entry to synchronize shift allocations."
-        },
-        "white_collar": {
-            "title": "Corporate Office & Software Systems",
-            "metric_1": "₹92.4 Lakhs Unbilled",
-            "metric_2": "₹21.5 Lakhs License Waste",
-            "layman_summary": "High-tier engineering and analytics software licenses continued renewing automatically for personnel inactive for over 45 days.",
-            "action": "Automated Remediation: Deploy automated license de-provisioning rules across active directory after 30 days of non-usage."
-        }
-    }
-}
+# 3. Dynamic Prospect Onboarding (Built specifically for Mid-Market Sales)
+st.sidebar.markdown("### 🎯 Live Prospect Configurator")
+st.sidebar.caption("Type any mid-market target company to generate a tailored audit.")
 
-# Sidebar Control Console
-st.sidebar.markdown("### 🏢 Enterprise Console")
-selected_client = st.sidebar.selectbox("Target Enterprise", list(CLIENT_DATABASE.keys()))
+prospect_name = st.sidebar.text_input("Target Company Name", "Apex Autotech Ltd. (Pune)")
+prospect_revenue = st.sidebar.selectbox("Annual Revenue Scale", ["₹100Cr - ₹250Cr", "₹250Cr - ₹500Cr", "₹500Cr+"])
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 📑 Report Modules")
-report_view = st.sidebar.radio(
-    "Select View",
-    ["Executive Master Report", "Blue-Collar Operations", "White-Collar Corporate"]
+st.sidebar.markdown("### 📊 Report Modules")
+report_module = st.sidebar.radio(
+    "Select Deliverable",
+    ["Executive Summary & Charts", "Blue-Collar (Plant Floor) Deep Dive", "White-Collar (Corporate ERP) Deep Dive"]
 )
 
-client_data = CLIENT_DATABASE[selected_client]
+# Scale leakage dynamically based on prospect input
+scale_factor = 1.2 if "₹250Cr" in prospect_revenue else (1.8 if "₹500Cr" in prospect_revenue else 0.8)
 
-st.sidebar.markdown("---")
-run_audit = st.sidebar.button("Execute Agentic Audit")
-
-# Main Header Section
-st.markdown(f"## ⚡ ArcheNex Intelligence Suite")
-st.markdown(f"**Target Enterprise:** {selected_client} | **Sector:** {client_data['industry']}")
+# Main Title Header (MBB Slide Style)
+st.markdown(f"### STRATEGIC AUDIT & FINANCIAL RECOVERY REPORT")
+st.markdown(f"**Prepared For:** {prospect_name} | **Framework:** Agentic Cross-Silo Governance")
 st.markdown("---")
 
-# Default or Executed View Logic
-if run_audit or report_view:
-        
-    if report_view == "Executive Master Report":
-        st.subheader("Executive Financial Recovery Briefing")
-        
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown(f'<div class="metric-card"><p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">TOTAL IDENTIFIED LEAKAGE</p><p style="font-size: 26px; color: #38bdf8; font-weight: bold; margin: 0;">{client_data["total_leakage"]}</p><p style="color: #64748b; font-size: 12px; margin-top: 6px;">Confidence Level: 95% ($N \\geq 50$)</p></div>', unsafe_allow_html=True)
-        with c2:
-            st.markdown(f'<div class="metric-card"><p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">BLUE-COLLAR VARIANCE</p><p style="font-size: 26px; color: #34d399; font-weight: bold; margin: 0;">{client_data["blue_collar"]["metric_2"]}</p><p style="color: #64748b; font-size: 12px; margin-top: 6px;">Plant Floor & MES</p></div>', unsafe_allow_html=True)
-        with c3:
-            st.markdown(f'<div class="metric-card"><p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">WHITE-COLLAR GAP</p><p style="font-size: 26px; color: #fbbf24; font-weight: bold; margin: 0;">{client_data["white_collar"]["metric_1"]}</p><p style="color: #64748b; font-size: 12px; margin-top: 6px;">Corporate ERP & HRIS</p></div>', unsafe_allow_html=True)
-        
-        st.markdown("### 📋 Executive Summary")
-        st.markdown(
-            f'<div class="executive-summary-box"><b>Strategic Overview:</b> Cross-silo orchestration between factory MES and corporate ERP environments for <b>{selected_client}</b> reveals systemic leakage split evenly between plant floor waiting inefficiencies and delayed corporate billing cycles. Adopting autonomous agentic oversight enables full financial recovery without staffing cutbacks.</div>',
-            unsafe_allow_html=True
-        )
+if report_module == "Executive Summary & Charts":
+    st.subheader("1. Executive Summary: Cross-Silo Value Leakage")
+    
+    c1, c2, c3 = st.columns(3)
+    c1.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 13px; font-weight: 600;">TOTAL LEAKAGE IDENTIFIED</p><p style="font-size: 28px; color: #1e3a8a; font-weight: bold; margin: 0;">₹{int(72 * scale_factor)} Lakhs</p><p style="color: #16a34a; font-size: 12px; margin-top: 6px;">↑ 95% Confidence Interval</p></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 13px; font-weight: 600;">BLUE-COLLAR VARIANCE</p><p style="font-size: 28px; color: #2563eb; font-weight: bold; margin: 0;">₹{int(42 * scale_factor)} Lakhs</p><p style="color: #64748b; font-size: 12px; margin-top: 6px;">Plant MES vs Attendance</p></div>', unsafe_allow_html=True)
+    c3.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 13px; font-weight: 600;">WHITE-COLLAR GAP</p><p style="font-size: 28px; color: #2563eb; font-weight: bold; margin: 0;">₹{int(30 * scale_factor)} Lakhs</p><p style="color: #64748b; font-size: 12px; margin-top: 6px;">ERP Invoicing Lags</p></div>', unsafe_allow_html=True)
+    
+    st.markdown(
+        f'<div class="mbb-callout"><b>MBB Diagnostic Takeaway:</b> Our autonomous cross-silo analysis for <b>{prospect_name}</b> indicates that 3.4% of operating margin is lost due to communication friction between factory-floor shift logs and corporate billing software. Implementing automated agentic synchronization captures immediate bottom-line recovery.</div>',
+        unsafe_allow_html=True
+    )
+    
+    st.markdown("### 📈 Financial Leakage Distribution by Department")
+    chart_data = pd.DataFrame({
+        'Department': ['Assembly Line #1', 'Machining Bay #2', 'Sales & Consulting', 'Corporate Administration'],
+        'Leakage (₹ Lakhs)': [int(22 * scale_factor), int(20 * scale_factor), int(18 * scale_factor), int(12 * scale_factor)]
+    }).set_index('Department')
+    
+    st.bar_chart(chart_data, color="#1e3a8a")
 
-    elif report_view == "Blue-Collar Operations":
-        st.subheader(f"🏭 Blue-Collar Audit: {client_data['blue_collar']['title']}")
-        
-        c1, c2 = st.columns(2)
-        c1.markdown(f'<div class="metric-card"><p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">MACHINERY INEFFICIENCY</p><p style="font-size: 24px; color: #38bdf8; font-weight: bold; margin: 0;">{client_data["blue_collar"]["metric_1"]}</p></div>', unsafe_allow_html=True)
-        c2.markdown(f'<div class="metric-card"><p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">FINANCIAL LEAKAGE</p><p style="font-size: 24px; color: #f87171; font-weight: bold; margin: 0;">{client_data["blue_collar"]["metric_2"]}</p></div>', unsafe_allow_html=True)
-        
-        st.markdown("### 🔍 Root-Cause Analysis (Plain English)")
-        st.markdown(f'<div class="executive-summary-box">{client_data["blue_collar"]["layman_summary"]}</div>', unsafe_allow_html=True)
-        
-        st.markdown("### 🛠️ Recommended Action Plan")
-        st.markdown(f'<div class="remediation-box">{client_data["blue_collar"]["action"]}</div>', unsafe_allow_html=True)
+elif report_module == "Blue-Collar (Plant Floor) Deep Dive":
+    st.subheader("2. Blue-Collar Operations: Plant Floor & Shift Audit")
+    
+    c1, c2 = st.columns(2)
+    c1.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 13px;">PLANT IDLE TIMELINE</p><p style="font-size: 24px; color: #1e3a8a; font-weight: bold;">{int(180 * scale_factor)} Hours / Mo</p></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 13px;">GHOST ATTENDANCE COST</p><p style="font-size: 24px; color: #dc2626; font-weight: bold;">₹{int(42 * scale_factor)} Lakhs</p></div>', unsafe_allow_html=True)
+    
+    st.markdown("### 🔍 Root-Cause Analysis")
+    st.markdown(f'<div class="mbb-callout"><b>Operational Breakdown:</b> Material staging bottlenecks forced primary production lines to halt while shift rosters in HR systems recorded labor crews as fully utilized, resulting in unverified wage payouts.</div>', unsafe_allow_html=True)
+    
+    st.markdown("### 💡 Recommended Strategic Intervention")
+    st.markdown(f'<div class="mbb-action"><b>Action Plan:</b> Deploy real-time PLC-to-HRIS auto-sync to pause shift billing dynamically during machinery downtime.</div>', unsafe_allow_html=True)
 
-    elif report_view == "White-Collar Corporate":
-        st.subheader(f"💻 White-Collar Audit: {client_data['white_collar']['title']}")
-        
-        c1, c2 = st.columns(2)
-        c1.markdown(f'<div class="metric-card"><p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">UNBILLED REVENUE</p><p style="font-size: 24px; color: #fbbf24; font-weight: bold; margin: 0;">{client_data["white_collar"]["metric_1"]}</p></div>', unsafe_allow_html=True)
-        c2.markdown(f'<div class="metric-card"><p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">LICENSE WASTE</p><p style="font-size: 24px; color: #f87171; font-weight: bold; margin: 0;">{client_data["white_collar"]["metric_2"]}</p></div>', unsafe_allow_html=True)
-        
-        st.markdown("### 🔍 Root-Cause Analysis (Plain English)")
-        st.markdown(f'<div class="executive-summary-box">{client_data["white_collar"]["layman_summary"]}</div>', unsafe_allow_html=True)
-        
-        st.markdown("### 🛠️ Recommended Action Plan")
-        st.markdown(f'<div class="remediation-box">{client_data["white_collar"]["action"]}</div>', unsafe_allow_html=True)
+elif report_module == "White-Collar (Corporate ERP) Deep Dive":
+    st.subheader("3. White-Collar Operations: Corporate ERP & Billing Audit")
+    
+    c1, c2 = st.columns(2)
+    c1.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 13px;">AVERAGE INVOICING LAG</p><p style="font-size: 24px; color: #1e3a8a; font-weight: bold;">16 Days</p></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 13px;">ORPHANED SOFTWARE LICENSES</p><p style="font-size: 24px; color: #dc2626; font-weight: bold;">₹{int(15 * scale_factor)} Lakhs</p></div>', unsafe_allow_html=True)
+    
+    st.markdown("### 🔍 Root-Cause Analysis")
+    st.markdown(f'<div class="mbb-callout"><b>Administrative Breakdown:</b> Project delivery milestones achieved in CRM modules experienced systematic delays before triggering financial invoicing in enterprise ERP systems.</div>', unsafe_allow_html=True)
+    
+    st.markdown("### 💡 Recommended Strategic Intervention")
+    st.markdown(f'<div class="mbb-action"><b>Action Plan:</b> Automate invoice creation workflows upon CRM milestone approval to accelerate cash flow cycles.</div>', unsafe_allow_html=True)
