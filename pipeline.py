@@ -8,11 +8,11 @@ import json
 
 import pandas as pd
 
-from . import detectors as dt
-from . import insights as ins
-from . import mapping as mp
-from . import store
-from .connectors import Connector
+import detectors as dt
+import insights as ins
+import mapping as mp
+import store
+connectors import Connector
 
 
 def ingest(connectors: dict[str, Connector], client: str, db_path=None) -> tuple[dict, list[str]]:
