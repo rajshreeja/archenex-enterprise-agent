@@ -36,3 +36,4 @@ def fetch_live_enterprise_data(client_name: str) -> dict:
             "error_message": str(e),
             "financial_leakage": 0.0
         }
+Add secure enterprise data connector
