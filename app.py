@@ -1,11 +1,11 @@
+"""ArcheNex Enterprise Intelligence: Streamlit app (v3)."""
 import os
 import sys
+import streamlit as st
+import pandas as pd
 
-# Look inside the archenex folder automatically
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(current_dir, "archenex"))
-
-import agent as ag
+# Standard package import (works automatically once setup.py is added)
+import archenex.agent as ag
 import hashlib
 import html
 import io
