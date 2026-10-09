@@ -1,8 +1,8 @@
+
+
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
 
 # 1. Page Configuration
 st.set_page_config(
@@ -109,28 +109,11 @@ if report_module == "Executive Master Cockpit":
         unsafe_allow_html=True
     )
 
-    # Complex Plotly Multi-Parameter Chart 1
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.markdown("#### Leakage Breakdown by Operational Department")
-        dept_df = pd.DataFrame({
-            'Department': ['Assembly Line #1', 'Machining Bay', 'Tooling & Maintenance', 'Supply Chain Staging', 'Corporate Sales', 'Admin & HRIS'],
-            'Financial Drain (₹ Lakhs)': [blue_leakage_lakhs*0.35, blue_leakage_lakhs*0.25, blue_leakage_lakhs*0.25, blue_leakage_lakhs*0.15, white_leakage_lakhs*0.6, white_leakage_lakhs*0.4]
-        })
-        fig_bar = px.bar(dept_df, x='Department', y='Financial Drain (₹ Lakhs)', color='Financial Drain (₹ Lakhs)', color_continuousScale='Blues')
-        fig_bar.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=320)
-        st.plotly_chart(fig_bar, use_container_width=True)
-
-    with col_b:
-        st.markdown("#### Cross-Silo Correlation Matrix")
-        corr_data = pd.DataFrame(
-            [[1.00, 0.82, 0.45], [0.82, 1.00, 0.68], [0.45, 0.68, 1.00]],
-            index=['Plant MES', 'HRIS Attendance', 'ERP Billing'],
-            columns=['Plant MES', 'HRIS Attendance', 'ERP Billing']
-        )
-        fig_heat = px.imshow(corr_data, text_auto=True, color_continuousScale='Blues', aspect='auto')
-        fig_heat.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=320)
-        st.plotly_chart(fig_heat, use_container_width=True)
+    st.markdown("#### Financial Drain Breakdown by Department (₹ Lakhs)")
+    dept_df = pd.DataFrame({
+        'Financial Drain (₹ Lakhs)': [blue_leakage_lakhs*0.35, blue_leakage_lakhs*0.25, blue_leakage_lakhs*0.25, blue_leakage_lakhs*0.15, white_leakage_lakhs*0.6, white_leakage_lakhs*0.4]
+    }, index=['Assembly Line #1', 'Machining Bay', 'Tooling & Maint.', 'Supply Chain', 'Corporate Sales', 'Admin & HRIS'])
+    st.bar_chart(dept_df, color="#1e3a8a")
 
 elif report_module == "Blue-Collar Plant Variance":
     st.subheader("2. Blue-Collar Operations: Plant Floor & Shift Audit")
@@ -139,15 +122,12 @@ elif report_module == "Blue-Collar Plant Variance":
     c1.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 12px;">SHIFT ROSTER MISMATCH</p><p style="font-size: 22px; color: #1e3a8a; font-weight: bold;">{int(headcount_blue * 0.14)} Hours / Month</p></div>', unsafe_allow_html=True)
     c2.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 12px;">UNVERIFIED WAGE PAYOUT</p><p style="font-size: 22px; color: #dc2626; font-weight: bold;">₹{blue_leakage_lakhs} Lakhs</p></div>', unsafe_allow_html=True)
 
-    st.markdown("#### Shift-wise Efficiency vs Idle Time Trend")
+    st.markdown("#### Shift-wise Efficiency vs Idle Time Trend (%)")
     trend_df = pd.DataFrame({
-        'Shift': ['Shift A (Morning)', 'Shift B (Evening)', 'Shift C (Night)'],
         'Active Production (%)': [88, 74, 62],
         'Idle Staging Delay (%)': [12, 26, 38]
-    })
-    fig_line = px.line(trend_df, x='Shift', y=['Active Production (%)', 'Idle Staging Delay (%)'], markers=True, color_discrete_sequence=['#1e3a8a', '#dc2626'])
-    fig_line.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=300)
-    st.plotly_chart(fig_line, use_container_width=True)
+    }, index=['Shift A (Morning)', 'Shift B (Evening)', 'Shift C (Night)'])
+    st.line_chart(trend_df, color=["#1e3a8a", "#dc2626"])
 
     st.markdown("### 🔍 Root-Cause Analysis")
     st.markdown(f'<div class="mbb-callout"><b>Operational Finding:</b> Material staging bottlenecks on the plant floor forced assembly lines to idle, while biometric attendance logs recorded shift crews as fully active, creating systematic wage overpayments.</div>', unsafe_allow_html=True)
@@ -161,14 +141,11 @@ elif report_module == "White-Collar ERP Audit":
     c1.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 12px;">AVERAGE INVOICING LAG</p><p style="font-size: 22px; color: #1e3a8a; font-weight: bold;">18 Business Days</p></div>', unsafe_allow_html=True)
     c2.markdown(f'<div class="mbb-card"><p style="color: #64748b; font-size: 12px;">ORPHANED SAAS LICENSES</p><p style="font-size: 22px; color: #dc2626; font-weight: bold;">₹{white_leakage_lakhs * 0.4:.1f} Lakhs</p></div>', unsafe_allow_html=True)
 
-    st.markdown("#### CRM Milestone vs ERP Invoicing Timeline")
+    st.markdown("#### Milestone Stage vs Invoicing Delay (Days)")
     lag_df = pd.DataFrame({
-        'Milestone Stage': ['Project Sign-off', 'Technical Review', 'Finance Approval', 'ERP Invoice Dispatch'],
         'Average Delay (Days)': [0, 4, 11, 18]
-    })
-    fig_funnel = px.funnel(lag_df, x='Average Delay (Days)', y='Milestone Stage', color_discrete_sequence=['#2563eb'])
-    fig_funnel.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=10, b=10, l=10, r=10), height=280)
-    st.plotly_chart(fig_funnel, use_container_width=True)
+    }, index=['Project Sign-off', 'Technical Review', 'Finance Approval', 'ERP Invoice Dispatch'])
+    st.bar_chart(lag_df, color="#2563eb")
 
     st.markdown("### 🔍 Root-Cause Analysis")
     st.markdown(f'<div class="mbb-callout"><b>Administrative Finding:</b> Project delivery milestones achieved in CRM modules experienced administrative bottlenecks before triggering financial invoicing in enterprise ERP systems.</div>', unsafe_allow_html=True)
@@ -178,17 +155,11 @@ elif report_module == "White-Collar ERP Audit":
 elif report_module == "Multi-Silo Risk Matrix":
     st.subheader("4. Multi-Silo Risk & Governance Assessment")
     
-    st.markdown("#### Enterprise Vulnerability Scatter Plot (Probability vs Impact)")
+    st.markdown("#### Vulnerability Impact Analysis (₹ Lakhs)")
     risk_df = pd.DataFrame({
-        'Vulnerability': ['Shift Roster Mismatch', 'Unbilled CRM Milestones', 'Orphaned SaaS Subscriptions', 'Material Staging Delay', 'Ghost Contractor Shift Logs'],
-        'Impact (₹ Lakhs)': [45, 38, 22, 50, 65],
-        'Probability (%)': [85, 90, 70, 60, 40],
-        'Risk Severity': ['High', 'Critical', 'Medium', 'Medium', 'High']
-    })
-    fig_scatter = px.scatter(risk_df, x='Probability (%)', y='Impact (₹ Lakhs)', size='Impact (₹ Lakhs)', color='Risk Severity', text='Vulnerability', color_discrete_map={'Critical':'#dc2626', 'High':'#ea580c', 'Medium':'#ca8a04'})
-    fig_scatter.update_traces(textposition='top center')
-    fig_scatter.update_layout(plot_bgcolor='white', paper_bgcolor='white', margin=dict(t=20, b=20, l=20, r=20), height=380)
-    st.plotly_chart(fig_scatter, use_container_width=True)
+        'Financial Impact (₹ Lakhs)': [45, 38, 22, 50, 65]
+    }, index=['Shift Roster Mismatch', 'Unbilled CRM Milestones', 'Orphaned SaaS Subscriptions', 'Material Staging Delay', 'Ghost Contractor Shift Logs'])
+    st.bar_chart(risk_df, color="#dc2626")
 
     st.markdown("### 🛡️ Agentic Governance Guarantee")
     st.markdown(f'<div class="mbb-callout"><b>Statistical Safety Lock:</b> Evaluated across over <b>{headcount_blue * 12} data points</b> ($N \\ge 50$). Confidence threshold: <b>95%</b>. Zero synthetic hallucination detected across cross-silo cross-referencing for <b>{client_name}</b>.</div>', unsafe_allow_html=True)
