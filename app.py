@@ -1,5 +1,4 @@
-
-   import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 
@@ -112,7 +111,7 @@ if module_selection == "1. Executive Master Cockpit":
     
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px; font-weight: 700;">TOTAL LEAKAGE IDENTIFIED</p><p style="font-size: 24px; color: #1e3a8a; font-weight: bold; margin: 0;">₹{total_leakage_cr} Cr</p><p style="color: #16a34a; font-size: 11px; margin-top: 4px;">95% Confidence (N &ge; 50)</p></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px; font-weight: 700;">TOTAL LEAKAGE IDENTIFIED</p><p style="font-size: 24px; color: #1e3a8a; font-weight: bold; margin: 0;">₹{total_leakage_cr} Cr</p><p style="color: #16a34a; font-size: 11px; margin-top: 4px;">95% Confidence (N >= 50)</p></div>', unsafe_allow_html=True)
     with c2:
         st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px; font-weight: 700;">BLUE-COLLAR FLOOR DRAIN</p><p style="font-size: 24px; color: #2563eb; font-weight: bold; margin: 0;">₹{blue_drain_lakhs} Lakhs</p><p style="color: #64748b; font-size: 11px; margin-top: 4px;">Plant MES vs {hris_system}</p></div>', unsafe_allow_html=True)
     with c3:
@@ -213,7 +212,7 @@ elif module_selection == "4. Multi-Silo Heatmap & Risk Matrix":
         st.bar_chart(risk_df, color="#dc2626")
 
     st.markdown(
-        f'<div class="layman-box"><b>Audit Defensibility:</b> Evaluated across <b>{headcount_blue * 14} transactional data points</b> (N &ge; 50) with a 95% statistical confidence interval. Integrated seamlessly with <b>{hris_system}</b> and <b>{erp_system}</b> without custom database overhauls.</div>',
+        f'<div class="layman-box"><b>Audit Defensibility:</b> Evaluated across <b>{headcount_blue * 14} transactional data points</b> (N >= 50) with a 95% statistical confidence interval. Integrated seamlessly with <b>{hris_system}</b> and <b>{erp_system}</b> without custom database overhauls.</div>',
         unsafe_allow_html=True
     )
 
