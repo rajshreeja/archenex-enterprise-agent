@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import io
+import base64
 from datetime import datetime, timedelta
 
 # 1. Page Configuration
@@ -218,8 +218,78 @@ elif module_selection == "4. ERP & Billing Reconciliation":
         st.markdown(f'<div class="action-box"><b>How we fix it:</b> We configure automated API triggers with <b>{erp_system}</b> so client invoices are generated the exact second a milestone is digitally signed off, while inactive SaaS licenses are auto-reclaimed.</div>', unsafe_allow_html=True)
 
 elif module_selection == "5. Boardroom Dossier & Export":
-    st.subheader("Comprehensive Boardroom Audit Dossier & Report Export")
+    st.subheader("Comprehensive Boardroom Audit Dossier & Layman Report Generator")
     
+    # Generate Word Document (.docx format via MIME Base64)
+    def get_docx_download_link():
+        html_content = f"""
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>ArcheNex Executive Audit Dossier</title></head>
+        <body style='font-family: Arial, sans-serif; color: #0f172a; line-height: 1.6; padding: 20px;'>
+            <h1 style='color: #1e3a8a; border-bottom: 3px solid #1e3a8a; padding-bottom: 10px;'>ARCHENEX EXECUTIVE AUDIT DOSSIER</h1>
+            <p><strong>Target Organization:</strong> {client_name}<br>
+            <strong>Industry Sector:</strong> {industry_sector}<br>
+            <strong>Active Connectors:</strong> {hris_system} (HRIS / Attendance) & {erp_system} (ERP / Billing)<br>
+            <strong>Report Date:</strong> {datetime.now().strftime('%Y-%m-%d')}</p>
+            
+            <div style='background-color: #eff6ff; border-left: 5px solid #2563eb; padding: 15px; margin: 20px 0;'>
+                <h3 style='color: #1e3a8a; margin-top: 0;'>Plain English Executive Summary (The Big Picture)</h3>
+                <p>Your factory floor acts like an engine while your corporate office acts as the steering wheel. Currently, they operate in silos. When machine parts are delayed on the floor, workers wait idly—yet your <strong>{hris_system}</strong> attendance system continues paying full wages. Simultaneously, completed projects wait weeks before <strong>{erp_system}</strong> generates invoices. ArcheNex bridges these gaps to safely recover <strong>₹{total_leakage_cr} Cr</strong> annually without headcount reductions.</p>
+            </div>
+            
+            <h2 style='color: #2563eb;'>1. Key Financial Leakage Breakdown</h2>
+            <ul>
+                <li><strong>Total Annual Leakage Identified:</strong> ₹{total_leakage_cr} Cr</li>
+                <li><strong>Plant Floor Drain ({hris_system}):</strong> ₹{blue_drain_lakhs} Lakhs (Shift roster mismatches & idle staging payouts)</li>
+                <li><strong>Corporate Office Gap ({erp_system}):</strong> ₹{white_drain_lakhs} Lakhs (Invoicing delays & orphaned SaaS subscriptions)</li>
+                <li><strong>Systemic Friction Index:</strong> {friction_index}%</li>
+            </ul>
+            
+            <h2 style='color: #2563eb;'>2. Financial Reconciliation & Action Ledger</h2>
+            <table border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse; border-color: #cbd5e1; width: 100%;'>
+                <tr style='background-color: #f8fafc;'>
+                    <th>Audit Vector</th><th>Integrated Silos</th><th>Leakage (₹ Lakhs)</th><th>Layman Explanation & Fix</th>
+                </tr>
+                <tr>
+                    <td>Shift Roster Mismatch</td>
+                    <td>MES & {hris_system}</td>
+                    <td>₹{round(blue_drain_lakhs * 0.35, 1)}</td>
+                    <td>Workers paid during unverified line stoppages. Automatically paused via live sensor sync.</td>
+                </tr>
+                <tr>
+                    <td>Unbilled Milestone Lag</td>
+                    <td>CRM & {erp_system}</td>
+                    <td>₹{round(white_drain_lakhs * 0.50, 1)}</td>
+                    <td>Completed milestones sit in administrative limbo before invoicing. Resolved with instant webhook triggers.</td>
+                </tr>
+                <tr>
+                    <td>Orphaned SaaS Subscriptions</td>
+                    <td>IT & {hris_system}</td>
+                    <td>₹{round(white_drain_lakhs * 0.50, 1)}</td>
+                    <td>Paying for software licenses of inactive personnel. Auto-reclaimed monthly.</td>
+                </tr>
+            </table>
+            
+            <h2 style='color: #2563eb;'>3. Commercial Payback & Implementation Roadmap</h2>
+            <p><strong>ArcheNex Enterprise Tier Investment:</strong> ₹35 Lakhs / Year (Achieving a 10x ROI Payback Model)</p>
+            <ul>
+                <li><strong>Phase 1 (Days 1–30):</strong> Non-invasive API connector deployment across {client_name}'s plant MES, {hris_system}, and {erp_system} environments.</li>
+                <li><strong>Phase 2 (Days 31–60):</strong> Real-time anomaly detection activation to halt unverified wage payouts and invoice lags.</li>
+                <li><strong>Phase 3 (Days 61+):</strong> Autonomous governance loop established, securing recurring annual recovery of ₹{total_leakage_cr} Cr.</li>
+            </ul>
+        </body>
+        </html>
+        """
+        b64 = base64.b64encode(html_content.encode('utf-8')).decode("utf-8")
+        return f'<a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64}" download="ArcheNex_Executive_Audit_Dossier_{client_name.replace(" ", "_")}.docx" style="display:inline-block; background-color:#1e3a8a; color:white; padding:12px 24px; text-decoration:none; border-radius:4px; font-weight:600; text-align:center; width:100%;">📥 Direct Download Word Document (.docx) Report</a>'
+
+    st.markdown("### 📥 Instant Boardroom Word Report (.docx)")
+    st.markdown("Click the button below to instantly trigger a direct download of your boardroom-ready Microsoft Word report. It includes all technical metrics, HRIS/ERP integration states, and plain-English summaries.")
+    
+    # Render the direct download HTML button
+    st.markdown(get_docx_download_link(), unsafe_allow_html=True)
+
+    st.markdown("---")
     st.markdown("### 📑 Executive Summary of Findings")
     st.markdown(
         f'<div class="layman-box">'
@@ -240,76 +310,6 @@ elif module_selection == "5. Boardroom Dossier & Export":
         'Remediation Status': ['Automated API Sync Ready', 'Webhook Trigger Ready', 'Auto-Reclaim Active', 'PLC Power-State Lock Ready', 'Biometric Gate Sync Ready']
     })
     st.dataframe(ledger_df, use_container_width=True)
-
-    # Automated Word (.docx compatible HTML MIME format) Report Generator
-    def generate_word_report():
-        html_content = f"""
-        <html>
-        <head><meta charset='utf-8'></head>
-        <body style='font-family: Arial, sans-serif; color: #0f172a; line-height: 1.6;'>
-            <h1 style='color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px;'>ARCHENEX ENTERPRISE AUDIT DOSSIER</h1>
-            <p><strong>Client Profile:</strong> {client_name}<br>
-            <strong>Industry Sector:</strong> {industry_sector}<br>
-            <strong>Integrated Architecture:</strong> Plant MES + {hris_system} + {erp_system}<br>
-            <strong>Audit Date:</strong> {datetime.now().strftime('%Y-%m-%d')}</p>
-            
-            <h2 style='color: #2563eb;'>1. Executive Summary & Leakage Valuation</h2>
-            <p>Total Verified Annual Leakage Identified: <strong>₹{total_leakage_cr} Cr</strong></p>
-            <ul>
-                <li>Blue-Collar Floor Drain ({hris_system}): ₹{blue_drain_lakhs} Lakhs</li>
-                <li>White-Collar ERP Gap ({erp_system}): ₹{white_drain_lakhs} Lakhs</li>
-                <li>Systemic Friction Index: {friction_index}%</li>
-            </ul>
-            
-            <h2 style='color: #2563eb;'>2. Financial Reconciliation Ledger</h2>
-            <table border='1' cellspacing='0' cellpadding='6' style='border-collapse: collapse; border-color: #cbd5e1; width: 100%;'>
-                <tr style='background-color: #f8fafc;'>
-                    <th>Audit Vector</th><th>Source Silos</th><th>Leakage (₹ Lakhs)</th><th>Remediation Status</th>
-                </tr>
-        """
-        for _, row in ledger_df.iterrows():
-            html_content += f"""
-                <tr>
-                    <td>{row['Audit Vector']}</td>
-                    <td>{row['Source Silos']}</td>
-                    <td>{row['Financial Leakage (₹ Lakhs)']}</td>
-                    <td>{row['Remediation Status']}</td>
-                </tr>
-            """
-        html_content += f"""
-            </table>
-            
-            <h2 style='color: #2563eb;'>3. Boardroom Remediation Roadmap & Commercial Payback</h2>
-            <p><strong>ArcheNex Enterprise Tier:</strong> ₹35 Lakhs / Year (10x ROI Payback Model)</p>
-            <p><strong>Implementation Phases:</strong></p>
-            <ul>
-                <li><strong>Phase 1 (Days 1–30):</strong> Secure non-invasive API connector deployment across {client_name}'s plant MES, {hris_system}, and {erp_system} environments.</li>
-                <li><strong>Phase 2 (Days 31–60):</strong> Real-time cross-silo anomaly detection activation to halt unverified wage payouts and unbilled milestone lags.</li>
-                <li><strong>Phase 3 (Days 61+):</strong> Autonomous governance loop established, securing recurring annual recovery of ₹{total_leakage_cr} Cr.</li>
-            </ul>
-        </body>
-        </html>
-        """
-        return html_content
-
-    # Export Buttons
-    col_dl1, col_dl2 = st.columns(2)
-    with col_dl1:
-        word_html = generate_word_report()
-        st.download_button(
-            label="📥 Automatically Generate & Download Word Report (.doc)",
-            data=word_html,
-            file_name=f"ArcheNex_Audit_Dossier_{client_name.replace(' ', '_')}.doc",
-            mime="application/msword",
-        )
-    with col_dl2:
-        csv_data = ledger_df.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            label="📥 Download Ledger Data (CSV)",
-            data=csv_data,
-            file_name=f"ArcheNex_Ledger_{client_name.replace(' ', '_')}.csv",
-            mime="text/css" if False else "text/csv",
-        )
 
     st.markdown("### 🚀 Commercial Payback Model")
     c1, c2 = st.columns(2)
