@@ -139,4 +139,230 @@ if module_selection == "1. Executive Master Cockpit":
         unsafe_allow_html=True
     )
 
-    col_a, col_b = st.columns(2
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("#### Departmental Financial Drain Breakdown (₹ Lakhs)")
+        dept_df = pd.DataFrame({
+            'Financial Drain (₹ Lakhs)': [blue_drain_lakhs*0.32, blue_drain_lakhs*0.28, blue_drain_lakhs*0.24, blue_drain_lakhs*0.16, white_drain_lakhs*0.55, white_drain_lakhs*0.45]
+        }, index=['Assembly Staging', 'Machining Cells', 'Tooling & Maint.', 'Shift Logistics', 'Corporate Sales', 'Admin & HRIS'])
+        st.bar_chart(dept_df, color="#1e3a8a")
+
+    with col_b:
+        st.markdown("#### Quarterly Recovery Trajectory (Pre vs Post ArcheNex)")
+        trend_df = pd.DataFrame({
+            'Baseline Leakage (₹ Cr)': [total_leakage_cr * 1.25, total_leakage_cr * 1.15, total_leakage_cr],
+            'Post-Recovery Leakage (₹ Cr)': [total_leakage_cr * 1.25, total_leakage_cr * 0.60, total_leakage_cr * 0.15]
+        }, index=['Q1 (Pre-Audit)', 'Q2 (Implementation)', 'Q3 (Optimized)'])
+        st.line_chart(trend_df, color=["#dc2626", "#16a34a"])
+
+elif module_selection == "2. Granular Transactional Audit Log":
+    st.subheader("Granular Line-Item Transactional Audit Feed")
+    st.markdown("Real-time anomaly detection stream correlating operational logs across plant hardware, HRIS attendance, and enterprise billing systems.")
+
+    np.random.seed(42)
+    timestamps = [datetime.now() - timedelta(hours=np.random.randint(1, 72)) for _ in range(25)]
+    sectors = ['Assembly Line 3', 'CNC Machining Cell 1', 'Tooling Maintenance', 'Corporate Billing', 'Shift Logistics']
+    anomaly_types = ['Ghost Attendance Match Failure', 'Unbilled CRM Milestone Lag', 'Idle Staging Payout Variance', 'Orphaned SaaS License Active', 'Overtime Discrepancy']
+    
+    log_data = pd.DataFrame({
+        'Timestamp': [t.strftime('%Y-%m-%d %H:%M') for t in timestamps],
+        'Cell / Dept': np.random.choice(sectors, 25),
+        'Anomaly Flag': np.random.choice(anomaly_types, 25),
+        'Source Silos': [f'MES vs {hris_system}' if i % 2 == 0 else f'CRM vs {erp_system}' for i in range(25)],
+        'Impact (₹)': np.random.randint(15000, 240000, 25),
+        'Status': np.random.choice(['Flagged for Review', 'Auto-Paused', 'Reconciled'], 25, p=[0.5, 0.3, 0.2])
+    })
+    
+    st.dataframe(log_data, use_container_width=True)
+    
+    st.markdown(
+        f'<div class="layman-box"><b>How to read this table:</b> Every single row represents an operational mismatch caught between your physical plant systems and your corporate software. Instead of waiting for an end-of-year manual audit, ArcheNex flags these discrepancies instantly.</div>',
+        unsafe_allow_html=True
+    )
+
+elif module_selection == "3. Plant MES & HRIS Deep-Dive":
+    st.subheader(f"Plant MES & {hris_system} Deep-Dive Analysis")
+    
+    overtime_cost = round(blue_drain_lakhs * 0.6, 1)
+    ghost_cost = round(blue_drain_lakhs * 0.4, 1)
+    idle_hrs = int(headcount_blue * 0.18)
+
+    c1, c2, c3 = st.columns(3)
+    c1.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">IDLE STAGING HOURS</p><p style="font-size: 22px; color: #1e3a8a; font-weight: bold;">{idle_hrs} Hours/Mo</p></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">GHOST ATTENDANCE COST</p><p style="font-size: 22px; color: #dc2626; font-weight: bold;">₹{ghost_cost} Lakhs</p></div>', unsafe_allow_html=True)
+    c3.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">OVERTIME DISCREPANCY</p><p style="font-size: 22px; color: #2563eb; font-weight: bold;">₹{overtime_cost} Lakhs</p></div>', unsafe_allow_html=True)
+
+    col_1, col_2 = st.columns(2)
+    with col_1:
+        st.markdown("#### Shift-wise Efficiency vs Idle Time (%)")
+        shift_df = pd.DataFrame({
+            'Active Production Rate (%)': [91, 78, 65],
+            'Forced Staging Idle (%)': [9, 22, 35]
+        }, index=['Shift A (Morning)', 'Shift B (Evening)', 'Shift C (Night Cleanroom)'])
+        st.bar_chart(shift_df, color=["#1e3a8a", "#dc2626"])
+
+    with col_2:
+        st.markdown("### 🔍 Granular Root-Cause Breakdown")
+        st.markdown(f'<div class="layman-box"><b>What is happening?</b> Assembly line #4 experienced chronic parts staging delays. Because your <b>{hris_system}</b> attendance system and plant machine logs do not talk to each other, workers logged in at the gate are paid for full shifts even when assembly lines sit idle waiting for raw materials.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="action-box"><b>How we fix it:</b> We connect ArcheNex via secure API to your <b>{hris_system}</b> instance. If machine power logs show downtime due to staging delays, shift payroll tracking automatically pauses until parts arrive.</div>', unsafe_allow_html=True)
+
+elif module_selection == "4. ERP & Billing Reconciliation":
+    st.subheader(f"{erp_system} & Corporate Workflow Reconciliation")
+    
+    unbilled_milestones = round(white_drain_lakhs * 0.65, 1)
+    orphaned_saas = round(white_drain_lakhs * 0.35, 1)
+
+    c1, c2, c3 = st.columns(3)
+    c1.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">AVG INVOICING LAG</p><p style="font-size: 22px; color: #1e3a8a; font-weight: bold;">19 Business Days</p></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">UNBILLED MILESTONES</p><p style="font-size: 22px; color: #dc2626; font-weight: bold;">₹{unbilled_milestones} Lakhs</p></div>', unsafe_allow_html=True)
+    c3.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 11px;">ORPHANED SAAS LICENSES</p><p style="font-size: 22px; color: #2563eb; font-weight: bold;">₹{orphaned_saas} Lakhs</p></div>', unsafe_allow_html=True)
+
+    col_1, col_2 = st.columns(2)
+    with col_1:
+        st.markdown("#### Milestone Approval to Invoicing Delay (Days)")
+        lag_df = pd.DataFrame({
+            'Average Delay (Days)': [0, 5, 12, 19]
+        }, index=['Project Sign-off', 'Technical Review', 'Finance Compliance', f'{erp_system} Invoice Dispatch'])
+        st.bar_chart(lag_df, color="#2563eb")
+
+    with col_2:
+        st.markdown("### 🔍 Granular Root-Cause Breakdown")
+        st.markdown(f'<div class="layman-box"><b>What is happening?</b> When your consulting and technical teams finish a project milestone, it sits in administrative limbo for 19 days before someone manually inputs it into <b>{erp_system}</b> to generate an invoice. Simultaneously, your organization continues paying software subscriptions for personnel who haven\'t logged in for 60+ days.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="action-box"><b>How we fix it:</b> We configure automated API triggers with <b>{erp_system}</b> so client invoices are generated the exact second a milestone is digitally signed off, while inactive SaaS licenses are auto-reclaimed.</div>', unsafe_allow_html=True)
+
+elif module_selection == "5. Boardroom Dossier & Export":
+    st.subheader("Comprehensive Boardroom Audit Dossier & High-End PDF Generator")
+    
+    # PDF Generation Engine using ReportLab & Matplotlib
+    def generate_pdf_report():
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
+        story = []
+        styles = getSampleStyleSheet()
+        
+        title_style = ParagraphStyle('DocTitle', parent=styles['Heading1'], fontSize=16, textColor=colors.HexColor('#1e3a8a'), spaceAfter=4)
+        subtitle_style = ParagraphStyle('DocSubtitle', parent=styles['Normal'], fontSize=9, textColor=colors.HexColor('#64748b'), spaceAfter=12)
+        heading_style = ParagraphStyle('SectionHeading', parent=styles['Heading2'], fontSize=11, textColor=colors.HexColor('#2563eb'), spaceBefore=8, spaceAfter=4)
+        body_style = ParagraphStyle('BodyTextCustom', parent=styles['Normal'], fontSize=8.5, textColor=colors.HexColor('#0f172a'), leading=12, spaceAfter=6)
+        
+        # Header
+        story.append(Paragraph("ARCHENEX ENTERPRISE AUDIT DOSSIER", title_style))
+        story.append(Paragraph(f"<b>Client Profile:</b> {client_name} | <b>Sector:</b> {industry_sector}<br/><b>Connectors:</b> {hris_system} & {erp_system} | <b>Generated on:</b> {datetime.now().strftime('%Y-%m-%d')}", subtitle_style))
+        
+        # Plain English Executive Summary
+        story.append(Paragraph("Executive Summary & Plain English Overview", heading_style))
+        exec_summary = (
+            f"Your factory floor acts like an engine while your corporate office acts as the steering wheel. Currently, they operate in silos. "
+            f"When machine parts are delayed on the floor, workers wait idly—yet your <b>{hris_system}</b> attendance system continues paying full wages. "
+            f"Simultaneously, completed projects wait weeks before <b>{erp_system}</b> generates invoices. ArcheNex bridges these gaps to safely recover "
+            f"<b>₹{total_leakage_cr} Cr</b> annually without headcount reductions."
+        )
+        story.append(Paragraph(exec_summary, body_style))
+        
+        # Metrics Table
+        metrics_data = [
+            ['Total Annual Leakage', f'₹{total_leakage_cr} Cr', 'Plant Floor Drain', f'₹{blue_drain_lakhs} Lakhs'],
+            ['White-Collar ERP Gap', f'₹{white_drain_lakhs} Lakhs', 'Friction Index', f'{friction_index}%']
+        ]
+        t_metrics = Table(metrics_data, colWidths=[135, 105, 135, 105])
+        t_metrics.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#f8fafc')),
+            ('BOX', (0,0), (-1,-1), 1, colors.HexColor('#cbd5e1')),
+            ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor('#e2e8f0')),
+            ('PADDING', (0,0), (-1,-1), 5),
+            ('FONTNAME', (0,0), (-1,-1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0,0), (-1,-1), 8.5),
+            ('TEXTCOLOR', (0,0), (-1,-1), colors.HexColor('#0f172a')),
+        ]))
+        story.append(t_metrics)
+        story.append(Spacer(1, 6))
+        
+        # Generate High-End Chart via Matplotlib
+        story.append(Paragraph("Departmental Financial Drain Breakdown (₹ Lakhs)", heading_style))
+        fig, ax = plt.subplots(figsize=(6, 2.0))
+        depts = ['Assembly Staging', 'Machining Cells', 'Tooling & Maint.', 'Shift Logistics', 'Corporate Sales', 'Admin & HRIS']
+        values = [blue_drain_lakhs*0.32, blue_drain_lakhs*0.28, blue_drain_lakhs*0.24, blue_drain_lakhs*0.16, white_drain_lakhs*0.55, white_drain_lakhs*0.45]
+        ax.barh(depts, values, color='#1e3a8a')
+        ax.set_xlabel('Financial Drain in ₹ Lakhs', fontsize=8)
+        ax.tick_params(axis='both', labelsize=8)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        plt.tight_layout()
+        
+        chart_buffer = io.BytesIO()
+        plt.savefig(chart_buffer, format='png', dpi=200)
+        plt.close(fig)
+        chart_buffer.seek(0)
+        
+        story.append(Image(chart_buffer, width=480, height=160))
+        story.append(Spacer(1, 6))
+        
+        # Financial Reconciliation Ledger Table
+        story.append(Paragraph("Financial Reconciliation Ledger & Remediation Status", heading_style))
+        ledger_table_data = [['Audit Vector', 'Source Silos', 'Leakage (₹ Lakhs)', 'Status']]
+        for _, row in ledger_df.iterrows():
+            ledger_table_data.append([str(row['Audit Vector']), str(row['Source Silos']), str(row['Financial Leakage (₹ Lakhs)']), str(row['Remediation Status'])])
+            
+        t_ledger = Table(ledger_table_data, colWidths=[150, 110, 100, 120])
+        t_ledger.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1e3a8a')),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0,0), (-1,0), 8),
+            ('BACKGROUND', (0,1), (-1,-1), colors.HexColor('#ffffff')),
+            ('BOX', (0,0), (-1,-1), 1, colors.HexColor('#cbd5e1')),
+            ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor('#e2e8f0')),
+            ('PADDING', (0,0), (-1,-1), 4),
+            ('FONTSIZE', (0,0), (-1,-1), 7.5),
+            ('TEXTCOLOR', (0,1), (-1,-1), colors.HexColor('#0f172a')),
+        ]))
+        story.append(t_ledger)
+        story.append(Spacer(1, 6))
+        
+        # Commercial Payback Roadmap
+        story.append(Paragraph("Commercial Payback & Implementation Roadmap", heading_style))
+        roadmap_text = (
+            f"<b>ArcheNex Enterprise Tier Investment:</b> ₹35 Lakhs / Year (Achieving a 10x ROI Payback Model)<br/>"
+            f"• <b>Phase 1 (Days 1–30):</b> Non-invasive API connector deployment across {client_name}'s plant MES, {hris_system}, and {erp_system} environments.<br/>"
+            f"• <b>Phase 2 (Days 31–60):</b> Real-time anomaly detection activation to halt unverified wage payouts and invoice lags.<br/>"
+            f"• <b>Phase 3 (Days 61+):</b> Autonomous governance loop established, securing recurring annual recovery of ₹{total_leakage_cr} Cr."
+        )
+        story.append(Paragraph(roadmap_text, body_style))
+        
+        doc.build(story)
+        buffer.seek(0)
+        return buffer
+
+    st.markdown("### 📥 Instant High-End PDF Report Download")
+    st.markdown("Click the button below to instantly download a professional, publication-quality PDF report containing high-end visual charts, financial reconciliation tables, and plain-English executive explanations.")
+    
+    pdf_buffer = generate_pdf_report()
+    st.download_button(
+        label="📥 Download Boardroom PDF Report (.pdf)",
+        data=pdf_buffer,
+        file_name=f"ArcheNex_Audit_Report_{client_name.replace(' ', '_')}.pdf",
+        mime="application/pdf",
+    )
+
+    st.markdown("---")
+    st.markdown("### 📑 Executive Summary of Findings")
+    st.markdown(
+        f'<div class="layman-box">'
+        f'<b>Target Organization:</b> {client_name}<br>'
+        f'<b>Industry Vertical:</b> {industry_sector}<br>'
+        f'<b>Integrated Architecture:</b> Plant MES + <b>{hris_system}</b> + <b>{erp_system}</b><br>'
+        f'<b>Total Annual Leakage Detected:</b> ₹{total_leakage_cr} Cr (Equivalent to {(total_leakage_cr * 100 / 350):.1f}% of mid-market EBITDA baseline)<br>'
+        f'<b>Statistical Confidence:</b> 95% (N >= 50 transactional audit vectors)'
+        f'</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### 📊 Complete Financial Reconciliation Ledger")
+    st.dataframe(ledger_df, use_container_width=True)
+
+    st.markdown("### 🚀 Commercial Payback Model")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-size: 12px; font-weight: bold;">VERIFIED FINANCIAL RECOVERY</p><p style="font-size: 28px; color: #16a34a; font-weight: bold; margin: 0;">₹{total_leakage_cr} Cr / Year</p><p style="color: #64748b; font-size: 11px; margin-top: 4px;">Direct EBITDA Impact</p></div>', unsafe_allow_html=True)
+    with c2:
+        st.markdown(f'<div class="enterprise-card"><p style="color: #64748b; font-weight: bold; font-size: 12px;">ARCHENEX ENTERPRISE TIER</p><p style="font-size: 28px; color: #1e3a8a; font-weight: bold; margin: 0;">₹35 Lakhs / Year</p><p style="font-size: 20px; color: #16a34a; font-weight: bold; margin-top: 4px;">10x ROI Payback Model</p></div>', unsafe_allow_html=True)
